@@ -1,4 +1,4 @@
-# User Journey Maps: Resonator
+# User Journey Maps: Resonatify
 
 **Date**: 2025-11-13
 **Phase**: 1.2 User Experience Design
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document maps the key user journeys through Resonator, identifying touchpoints, user thoughts, emotions, pain points, and opportunities for improvement. Each journey is mapped for our primary persona (Sarah - The Mindful Professional) with notes for other personas where they differ significantly.
+This document maps the key user journeys through Resonatify, identifying touchpoints, user thoughts, emotions, pain points, and opportunities for improvement. Each journey is mapped for our primary persona (Sarah - The Mindful Professional) with notes for other personas where they differ significantly.
 
 ---
 
@@ -42,12 +42,12 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 **Touchpoint**: Disk image mount, drag-to-Applications
 
 **User Actions:**
-- Downloads Resonator DMG from website
+- Downloads Resonatify DMG from website
 - Opens DMG file
 - Drags app to Applications folder
 - Ejects disk image
 - Opens Applications folder
-- Double-clicks Resonator
+- Double-clicks Resonatify
 
 **User Thoughts:**
 - "Okay, standard Mac installation"
@@ -72,7 +72,7 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 **User Actions:**
 - Double-clicks app
 - [If unsigned] Sees Gatekeeper warning → Goes to System Settings → Security → Opens Anyway
-- Sees "Resonator would like to send notifications" → Clicks Allow
+- Sees "Resonatify would like to send notifications" → Clicks Allow
 - App icon appears in menu bar
 - Main window opens
 
@@ -619,7 +619,7 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 - Uncertainty about background execution
 
 **Opportunities:**
-- 💡 First time closing: Show tooltip "Resonator is still running in the menu bar"
+- 💡 First time closing: Show tooltip "Resonatify is still running in the menu bar"
 - 📝 Settings option: "Minimize to tray on close" (macOS: hide window)
 - 🎨 Menu bar icon stays visible as confirmation
 - 💡 Notification: "Schedules will continue in the background"
@@ -690,7 +690,7 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 - Opens main window
 - Looks for settings
 - Clicks "Settings" button (gear icon, top right) OR
-- Menu: Resonator → Settings (Cmd+,)
+- Menu: Resonatify → Settings (Cmd+,)
 
 **User Thoughts:**
 - "Where are settings?"
@@ -744,7 +744,7 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 - Sees "Launch at login" toggle (off)
 - Clicks toggle
 - Toggle animates to "on"
-- [macOS] Sees permission dialog: "Resonator would like to add a login item"
+- [macOS] Sees permission dialog: "Resonatify would like to add a login item"
 - Clicks "Allow"
 - Toggle stays on
 
@@ -851,7 +851,7 @@ This document maps the key user journeys through Resonator, identifying touchpoi
 - 🎨 Prominent but not pushy donation button
 - 📝 Clear, friendly copy
 - 💡 Show recent updates/changelog
-- 💡 Social proof: "Join XX users supporting Resonator"
+- 💡 Social proof: "Join XX users supporting Resonatify"
 
 ---
 

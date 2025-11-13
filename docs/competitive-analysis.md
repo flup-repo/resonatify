@@ -283,7 +283,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 - Limited support: WAV, FLAC (frequent errors in Apple Music)
 - Native apps lack Hi-Res format support
 
-**Implication for Resonator:**
+**Implication for Resonatify:**
 - Must support: MP3, WAV, FLAC, M4A, OGG, AIFF
 - Library choice (rodio) provides good coverage
 - M4A/AAC may require symphonia crate
@@ -333,7 +333,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 
 ### 3.1 macOS Background App Approaches
 
-**Launch Agents (Recommended for Resonator):**
+**Launch Agents (Recommended for Resonatify):**
 - User-specific background processes
 - Location: `~/Library/LaunchAgents`
 - Provide auxiliary UI capabilities (menu bar)
@@ -374,7 +374,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 3. User grants/denies
 4. App handles gracefully with helpful messaging
 
-**Key Permissions for Resonator:**
+**Key Permissions for Resonatify:**
 - Notifications (required for alerts)
 - File access (automatic via file dialog)
 - Microphone (future: audio recording)
@@ -418,7 +418,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 - GitHub Sponsors (for open source)
 - Patreon (for ongoing support)
 
-**Recommendation for Resonator:**
+**Recommendation for Resonatify:**
 - Start with free + donations
 - Consider freemium if advanced features added (AI, recording, etc.)
 - Use "Buy Me a Coffee" + PayPal
@@ -480,7 +480,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 
 ## 6. Competitive Positioning
 
-### 6.1 Resonator Positioning
+### 6.1 Resonatify Positioning
 
 **Primary Value Proposition:**
 "The simplest way to schedule audio files to play at specific times on macOS"
@@ -681,7 +681,7 @@ This document analyzes the competitive landscape for macOS scheduling, timer, an
 5. **Intrusive**: Full-screen takeovers are annoying
 6. **Unreliable**: Schedules not executing is unforgivable
 
-### 9.3 Key Takeaways for Resonator
+### 9.3 Key Takeaways for Resonatify
 
 **Do:**
 - ✅ Keep UI minimal and beautiful

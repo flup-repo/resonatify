@@ -1,4 +1,4 @@
-# Resonator - Brand Identity
+# Resonatify - Brand Identity
 
 **Last Updated**: 2025-11-13
 
@@ -6,16 +6,16 @@
 
 ## App Name
 
-**Resonator**
+**Resonatify**
 
 ### Name Meaning
-"Resonator" evokes:
+"Resonatify" evokes:
 - **Sound/Audio**: Resonance is fundamental to audio and acoustics
 - **Impact**: Something that resonates has lasting impact and meaning
-- **Rhythm**: Resonators create and maintain vibrations - perfect for scheduling and routines
+- **Rhythm**: Resonatify helps create and maintain rhythm - perfect for scheduling and routines
 - **Memory**: Things that resonate stay with us - memorable and meaningful
 
-### Why Resonator?
+### Why Resonatify?
 - Professional yet approachable
 - Clearly conveys the audio aspect
 - Memorable and distinctive
@@ -115,16 +115,16 @@
 ## App Store Presence
 
 ### Name Variants
-- **macOS App Store**: "Resonator - Audio Scheduler"
-- **Website**: "Resonator"
-- **GitHub**: "resonator"
-- **Social Media**: @ResonatorApp or @GetResonator
+- **macOS App Store**: "Resonatify - Audio Scheduler"
+- **Website**: "Resonatify"
+- **GitHub**: "resonatify"
+- **Social Media**: @ResonatifyApp or @GetResonatify
 
 ### Short Description (80 chars)
 "Schedule audio files to play at specific times. Simple, reliable, beautiful."
 
 ### Full Description
-"Resonator is the simplest way to schedule audio files on your Mac. Create audio reminders for meditation, work breaks, practice sessions, or any routine that needs a sound cue.
+"Resonatify is the simplest way to schedule audio files on your Mac. Create audio reminders for meditation, work breaks, practice sessions, or any routine that needs a sound cue.
 
 **Features:**
 - Schedule any audio file (MP3, WAV, FLAC, M4A, OGG)
@@ -145,22 +145,22 @@ Perfect for:
 Built with Tauri, React, and Rust for maximum performance and reliability."
 
 ### Keywords (macOS App Store)
-resonator, audio, scheduler, timer, reminder, meditation, alarm, sound, schedule, routine, habit, productivity, focus, break, mindfulness
+resonatify, audio, scheduler, timer, reminder, meditation, alarm, sound, schedule, routine, habit, productivity, focus, break, mindfulness
 
 ---
 
 ## Domain & Handles
 
 ### Recommended Domains
-- **Primary**: resonator.app (clean, professional)
-- **Alternative**: getresonator.com
-- **Alternative**: resonator.audio (creative TLD)
+- **Primary**: resonatify.app (clean, professional)
+- **Alternative**: getresonatify.com
+- **Alternative**: resonatify.audio (creative TLD)
 
 ### Social Media
-- **Twitter/X**: @ResonatorApp
-- **GitHub**: github.com/yourusername/resonator
-- **Reddit**: r/ResonatorApp (for community)
-- **Discord**: Resonator Community (for support)
+- **Twitter/X**: @ResonatifyApp
+- **GitHub**: github.com/yourusername/resonatify
+- **Reddit**: r/ResonatifyApp (for community)
+- **Discord**: Resonatify Community (for support)
 
 ---
 
@@ -200,7 +200,7 @@ resonator, audio, scheduler, timer, reminder, meditation, alarm, sound, schedule
 ## Competitive Positioning
 
 ### Positioning Statement
-"For individuals who need custom audio reminders, Resonator is the audio scheduling app that provides reliable, background execution with a minimal interface, unlike general timer apps that only play system sounds or complex schedulers with cluttered interfaces."
+"For individuals who need custom audio reminders, Resonatify is the audio scheduling app that provides reliable, background execution with a minimal interface, unlike general timer apps that only play system sounds or complex schedulers with cluttered interfaces."
 
 ### Key Differentiators
 1. **Audio-First**: Only app focused specifically on scheduling audio files
@@ -218,12 +218,12 @@ resonator, audio, scheduler, timer, reminder, meditation, alarm, sound, schedule
 "Schedule your meditation, breaks, and routines with custom audio"
 
 ### Launch
-"Resonator is here: Schedule audio files with a single click"
+"Resonatify is here: Schedule audio files with a single click"
 "Your meditation timer just got an upgrade"
 
 ### Post-Launch
-"Join [X] users building better routines with Resonator"
-"Resonator v1.1: Now with [new feature]"
+"Join [X] users building better routines with Resonatify"
+"Resonatify v1.1: Now with [new feature]"
 
 ---
 
@@ -244,27 +244,27 @@ resonator, audio, scheduler, timer, reminder, meditation, alarm, sound, schedule
 ## File Naming Conventions
 
 ### Code & Files
-- **Repository**: `resonator`
-- **Package name**: `resonator`
-- **App identifier**: `com.yourname.resonator`
-- **Database**: `resonator.db`
-- **Config files**: `resonator.conf.json`
+- **Repository**: `resonatify`
+- **Package name**: `resonatify`
+- **App identifier**: `com.yourname.resonatify`
+- **Database**: `resonatify.db`
+- **Config files**: `resonatify.conf.json`
 
 ### Documentation
-- **Docs site**: docs.resonator.app
-- **Help articles**: help.resonator.app
-- **Blog**: blog.resonator.app
-- **Press kit**: resonator.app/press
+- **Docs site**: docs.resonatify.app
+- **Help articles**: help.resonatify.app
+- **Blog**: blog.resonatify.app
+- **Press kit**: resonatify.app/press
 
 ---
 
 ## Press & Media
 
 ### Boilerplate
-"Resonator is a free, open-source macOS application that allows users to schedule audio files to play at specific times. Built with Tauri, React, and Rust, Resonator provides a minimal, reliable solution for audio-based reminders, meditation timers, and routine building."
+"Resonatify is a free, open-source macOS application that allows users to schedule audio files to play at specific times. Built with Tauri, React, and Rust, Resonatify provides a minimal, reliable solution for audio-based reminders, meditation timers, and routine building."
 
 ### Founder Quote
-"I built Resonator because I wanted a simple way to play my own meditation tracks at specific times each day. Existing timer apps only played system sounds, and general schedulers were too complex. Resonator focuses on one thing and does it beautifully." - [Your Name]
+"I built Resonatify because I wanted a simple way to play my own meditation tracks at specific times each day. Existing timer apps only played system sounds, and general schedulers were too complex. Resonatify focuses on one thing and does it beautifully." - [Your Name]
 
 ---
 

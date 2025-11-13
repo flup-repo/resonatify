@@ -3293,7 +3293,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "resonator"
+name = "resonatify"
 version = "0.1.0"
 dependencies = [
  "chrono",
