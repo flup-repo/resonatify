@@ -27,13 +27,19 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 
 # Date/time handling
-chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
 
 # Audio playback
 rodio = "0.19"
 
 # Database
-rusqlite = { version = "0.32", features = ["bundled"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "macros", "sqlite", "chrono", "uuid"] }
+
+# Identifiers
+uuid = { version = "1", features = ["serde", "v4"] }
+
+# Error handling
+thiserror = "1"
 
 # Tauri plugins (to be added when needed in Phase 4)
 # tauri-plugin-autostart = "2"

@@ -511,64 +511,31 @@ Based on research of similar applications and cross-platform development best pr
 **Estimated Duration:** 1 week
 **Complexity:** Medium
 
-**Tasks:**
-1. Set up SQLite database:
-   ```rust
-   // src-tauri/src/db/mod.rs
-   use sqlx::SqlitePool;
+**Status:** ✅ Complete (2025-11-13)
 
-   pub async fn init_db() -> Result<SqlitePool, sqlx::Error> {
-       let pool = SqlitePool::connect("sqlite:scheduler.db").await?;
-       sqlx::migrate!("./migrations").run(&pool).await?;
-       Ok(pool)
-   }
-   ```
+**Summary of Work:**
+- Implemented a pooled SQLite connection layer backed by `sqlx`, including application data directory resolution and automatic migration execution (`src-tauri/src/db/mod.rs`).
+- Added the initial migration (`001_create_core_tables.sql`) creating the `schedules`, `settings`, and `audio_playback_history` tables with indexes, constraints, and retention trigger.
+- Built repository modules for schedules, settings, and playback history with strongly-typed models and JSON-backed repeat configuration.
+- Established unit tests exercising migrations and repository CRUD behaviour using in-memory SQLite databases.
 
-2. Define database schema:
-   ```sql
-   -- migrations/001_initial.sql
-   CREATE TABLE schedules (
-       id TEXT PRIMARY KEY,
-       name TEXT NOT NULL,
-       audio_file_path TEXT NOT NULL,
-       scheduled_time TEXT NOT NULL,
-       enabled INTEGER DEFAULT 1,
-       repeat_type TEXT, -- 'once', 'daily', 'weekly', 'weekdays', 'weekends'
-       repeat_days TEXT, -- JSON array for custom days
-       volume INTEGER DEFAULT 100,
-       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-   );
-
-   CREATE TABLE settings (
-       key TEXT PRIMARY KEY,
-       value TEXT NOT NULL,
-       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-   );
-
-   CREATE TABLE audio_playback_history (
-       id TEXT PRIMARY KEY,
-       schedule_id TEXT,
-       played_at TEXT DEFAULT CURRENT_TIMESTAMP,
-       status TEXT, -- 'success', 'failed', 'skipped'
-       FOREIGN KEY (schedule_id) REFERENCES schedules(id)
-   );
-   ```
-
-3. Implement data access layer (Repository pattern)
-4. Implement settings repository
-5. Write unit tests
+**Completed Tasks:**
+1. ✅ Configured pooled SQLite access with automatic migrations (`sqlx`, WAL mode, foreign keys, app data directory handling).
+2. ✅ Authored `001_create_core_tables.sql` covering schedules, settings, and playback history tables plus supporting indexes/triggers.
+3. ✅ Implemented repository layer for schedules (CRUD, filtering), settings (upsert/delete), and playback history (record/query/cleanup).
+4. ✅ Added comprehensive models for repeat logic and playback status serialization.
+5. ✅ Wrote async unit tests validating migrations and repository operations using in-memory databases.
 
 **Deliverables:**
-- Database schema with migrations
-- Repository pattern implementation
-- Unit tests for data access layer
+- ✅ Database schema with migrations
+- ✅ Repository pattern implementation
+- ✅ Unit tests for data access layer
 
 **Technical Considerations:**
-- Use UUIDs for schedule IDs
-- Store times in UTC, convert to local for display
-- Handle database migrations gracefully
-- Add indexes for frequently queried columns
+- UUIDs generated via `uuid` crate for schedule/history identifiers.
+- Timestamps stored in UTC using `strftime('%Y-%m-%dT%H:%M:%fZ', 'now')` defaults and `chrono` for runtime writes.
+- Migrations executed on startup via `sqlx::migrate!` with graceful directory creation.
+- Added indexes on enabled schedules, scheduled_time ordering, and playback history lookups; playback history capped at 1000 entries via trigger.
 
 **Dependencies:** None (foundation layer)
 
@@ -1083,7 +1050,7 @@ Based on research of similar applications and cross-platform development best pr
 |-------|----------|------------|----------|--------|
 | Research & Planning | 1-2 weeks | Week 1 | Week 2 | ✅ Complete (1.1 ✅, 1.2 ✅, 1.3 ✅) |
 | Project Setup | 3-5 days | Week 2 | Week 3 | ✅ Complete (2.1 ✅, 2.2 ✅, 2.3 ✅) |
-| Core Development | 6-8 weeks | Week 3 | Week 10 | ⚪ Not Started |
+| Core Development | 6-8 weeks | Week 3 | Week 10 | 🟡 In Progress (3.1 ✅) |
 | macOS Implementation | 1 week | Week 10 | Week 11 | ⚪ Not Started |
 | Testing | 1-2 weeks | Week 11 | Week 13 | ⚪ Not Started |
 | Deployment | 1 week | Week 13 | Week 14 | ⚪ Not Started |
@@ -1119,6 +1086,14 @@ Based on research of similar applications and cross-platform development best pr
   - ✅ Installed Radix UI primitives for accessibility
   - ✅ Set up TypeScript path aliases (@/*)
   - ✅ Verified builds: Frontend (377ms) and Backend (0.46s)
+
+**Phase 3 Progress:** 1/6 tasks complete (16%)
+- ✅ 3.1 Data Persistence Layer — SQLite migrations, repositories, and tests in place
+- ⏳ 3.2 Audio Playback System — next up (rodio integration)
+- ⏳ 3.3 Scheduling Engine — pending persistence-driven scheduling logic
+- ⏳ 3.4 Schedule Management UI — pending CRUD integration
+- ⏳ 3.5 Settings UI — pending persistence wiring
+- ⏳ 3.6 System Tray Integration — pending scheduler engine
 
 ---
 
