@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+target/
+
+# Build output
+dist/
+dist-ssr/
+build/
+out/
+
+# Tauri
+src-tauri/target/
+.tauri/
+
+# Git
+.git/
+
+# Logs
+*.log
+
+# Database
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+coverage/
+.cache/
+*.min.js
+*.min.css
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Documentation build
+.docusaurus/
+
+# Config files that should not be formatted
+tauri.conf.json

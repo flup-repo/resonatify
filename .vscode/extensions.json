@@ -1,0 +1,33 @@
+{
+  "recommendations": [
+    // Rust Development
+    "rust-lang.rust-analyzer",
+    "vadimcn.vscode-lldb",
+
+    // Tauri Development
+    "tauri-apps.tauri-vscode",
+
+    // Frontend Development
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+
+    // TypeScript/JavaScript
+    "ms-vscode.vscode-typescript-next",
+
+    // Version Control
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // Code Quality
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "visualstudioexptteam.vscodeintellicode",
+    "gruntfuggly.todo-tree",
+    "wayou.vscode-todo-highlight"
+  ],
+  "unwantedRecommendations": []
+}
