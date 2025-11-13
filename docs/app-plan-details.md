@@ -218,7 +218,7 @@ Based on research of similar applications and cross-platform development best pr
 - Event-driven updates (frontend listens to backend events)
 - Arc<Mutex<>> for shared state in Rust
 - Zustand for lightweight frontend state management
-- SQLite with sqlx for compile-time query checking
+- SQLite with sqlx runtime query builders (no offline preparation required)
 - Rodio for cross-platform audio (with symphonia for M4A)
 
 ---
@@ -517,6 +517,7 @@ Based on research of similar applications and cross-platform development best pr
 - Implemented a pooled SQLite connection layer backed by `sqlx`, including application data directory resolution and automatic migration execution (`src-tauri/src/db/mod.rs`).
 - Added the initial migration (`001_create_core_tables.sql`) creating the `schedules`, `settings`, and `audio_playback_history` tables with indexes, constraints, and retention trigger.
 - Built repository modules for schedules, settings, and playback history with strongly-typed models and JSON-backed repeat configuration.
+- Switched to runtime `sqlx` query builders to eliminate the need for `DATABASE_URL` or offline preparation during builds.
 - Established unit tests exercising migrations and repository CRUD behaviour using in-memory SQLite databases.
 
 **Completed Tasks:**
