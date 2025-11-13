@@ -1,4 +1,4 @@
-# User Personas: Resonator
+# User Personas: Resonatify
 
 **Date**: 2025-11-13
 **Phase**: 1.2 User Experience Design
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document defines the target user personas for Resonator. These personas guide design decisions, feature prioritization, and user experience considerations throughout development.
+This document defines the target user personas for Resonatify. These personas guide design decisions, feature prioritization, and user experience considerations throughout development.
 
 ---
 

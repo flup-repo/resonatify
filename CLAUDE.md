@@ -1,13 +1,13 @@
-# Resonator - AI Assistant Reference
+# Resonatify - AI Assistant Reference
 
 > **Quick Context File for AI Assistants**
-> This file provides essential information about the Resonator project to help AI assistants understand the codebase structure, conventions, and technical decisions.
+> This file provides essential information about the Resonatify project to help AI assistants understand the codebase structure, conventions, and technical decisions.
 
 ---
 
 ## Project Overview
 
-**Resonator** is a cross-platform desktop application that allows users to schedule audio files to play at specific times. It functions as a background process similar to a cron job execution engine.
+**Resonatify** is a cross-platform desktop application that allows users to schedule audio files to play at specific times. It functions as a background process similar to a cron job execution engine.
 
 - **Primary Platform**: macOS (initial release)
 - **Future Platforms**: Windows, Linux
@@ -66,7 +66,7 @@
 ## Project Structure
 
 ```
-resonator/
+resonatify/
 ├── docs/
 │   ├── plan-new-app.md           # Original requirements
 │   └── app-plan-details.md       # Comprehensive development plan
@@ -856,4 +856,4 @@ When starting a new session:
 - **Be secure**: Validate inputs, handle permissions, follow best practices
 - **Be helpful**: Explain decisions, suggest improvements, ask clarifying questions
 
-Good luck building Resonator! 🎵⏰
+Good luck building Resonatify! 🎵⏰

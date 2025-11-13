@@ -1,4 +1,4 @@
-# Architecture Design: Resonator
+# Architecture Design: Resonatify
 
 **Date**: 2025-11-13
 **Phase**: 1.3 Architecture Design
@@ -28,7 +28,7 @@
 
 ## Executive Summary
 
-Resonator is built using **Tauri 2.0**, combining a **React + TypeScript** frontend with a **Rust** backend. The architecture is designed for:
+Resonatify is built using **Tauri 2.0**, combining a **React + TypeScript** frontend with a **Rust** backend. The architecture is designed for:
 
 - **Performance**: <1s startup, <50MB memory, <5% CPU idle
 - **Reliability**: 99.9% schedule execution accuracy
@@ -784,9 +784,9 @@ UI Re-render (schedule card shows "playing" state)
 
 ### Database File Location
 
-- **macOS**: `~/Library/Application Support/com.yourname.resonator/resonator.db`
-- **Windows**: `%APPDATA%/Resonator/resonator.db`
-- **Linux**: `~/.local/share/resonator/resonator.db`
+- **macOS**: `~/Library/Application Support/com.yourname.resonatify/resonatify.db`
+- **Windows**: `%APPDATA%/Resonatify/resonatify.db`
+- **Linux**: `~/.local/share/resonatify/resonatify.db`
 
 ### Schema
 
@@ -1777,7 +1777,7 @@ try {
 │                            ↓                                │
 │  ┌───────────────────────────────────────────────────────┐ │
 │  │                                                       │ │
-│  │             Resonator Application              │ │
+│  │             Resonatify Application              │ │
 │  │                                                       │ │
 │  │  ┌──────────────┐            ┌──────────────────┐   │ │
 │  │  │   Frontend   │ ←→ IPC ←→  │   Backend        │   │ │

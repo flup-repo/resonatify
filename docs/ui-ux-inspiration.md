@@ -28,7 +28,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
   - Alarm apps: Bell icon
   - Scheduler apps: Calendar icon with clock
 
-**Recommendation for Resonator:**
+**Recommendation for Resonatify:**
 - Primary icon: Waveform + clock combination
 - Active state: Filled waveform
 - Idle state: Outline waveform
@@ -39,7 +39,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 **Typical Menu Organization:**
 ```
 ┌─────────────────────────────┐
-│ 🎵 Resonator          │
+│ 🎵 Resonatify          │
 ├─────────────────────────────┤
 │ Next: Meditation in 15m     │ ← Dynamic next schedule
 ├─────────────────────────────┤
@@ -50,7 +50,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 │ ⚙️  Settings...              │
 │ ℹ️  About                    │
 ├─────────────────────────────┤
-│ ❌ Quit Resonator      │
+│ ❌ Quit Resonatify      │
 └─────────────────────────────┘
 ```
 
@@ -78,7 +78,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 **Popular Layout Pattern:**
 ```
 ┌────────────────────────────────────────────┐
-│  Resonator              [- □ ×]     │ ← Header
+│  Resonatify              [- □ ×]     │ ← Header
 ├────────────────────────────────────────────┤
 │  [+ New Schedule]  [Settings]  [Refresh]  │ ← Action Bar
 ├────────────────────────────────────────────┤
@@ -353,7 +353,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 **Schedule Execution:**
 ```
 ┌────────────────────────────────────┐
-│  🎵 Resonator                │
+│  🎵 Resonatify                │
 │                                    │
 │  Playing: Morning Meditation       │
 │  meditation.mp3                    │
@@ -365,7 +365,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 **Schedule Complete:**
 ```
 ┌────────────────────────────────────┐
-│  ✓ Resonator                 │
+│  ✓ Resonatify                 │
 │                                    │
 │  Finished playing:                 │
 │  Morning Meditation                │
@@ -377,7 +377,7 @@ This document captures UI/UX patterns, design inspiration, and interface guideli
 **Error:**
 ```
 ┌────────────────────────────────────┐
-│  ⚠️ Resonator                 │
+│  ⚠️ Resonatify                 │
 │                                    │
 │  Failed to play:                   │
 │  Morning Meditation                │

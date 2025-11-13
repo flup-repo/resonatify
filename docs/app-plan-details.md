@@ -270,7 +270,7 @@ Based on research of similar applications and cross-platform development best pr
 3. ✅ Set up version control:
    - ✅ Initialize Git repository (main branch)
    - ✅ Create .gitignore (comprehensive: Rust target/, node_modules/, build artifacts, OS files, IDE configs)
-   - ✅ Set up GitHub remote (https://github.com/flup-repo/resonator.git)
+   - ✅ Set up GitHub remote (https://github.com/flup-repo/resonatify.git)
    - ✅ Create README.md with project overview
    - ✅ Initial commit with all Phase 1 documentation (commit: 62b7a9a)
    - ✅ Pushed to remote repository
@@ -287,7 +287,7 @@ Based on research of similar applications and cross-platform development best pr
   - ESLint configuration (.eslintrc.cjs)
   - Prettier configuration (.prettierrc, .prettierignore)
 - ✅ Git repository with initial commit
-  - Remote: https://github.com/flup-repo/resonator.git
+  - Remote: https://github.com/flup-repo/resonatify.git
   - Branch: main (tracking origin/main)
   - Files: 12 files, 8,763 lines committed
   - Includes: README.md, BRANDING.md, CLAUDE.md, complete docs/ directory
@@ -370,9 +370,9 @@ Based on research of similar applications and cross-platform development best pr
    ```json
    // tauri.conf.json highlights
    {
-     "identifier": "com.yourname.resonator",
+     "identifier": "com.yourname.resonatify",
      "windows": [{
-       "title": "Resonator",
+       "title": "Resonatify",
        "width": 800,
        "height": 600,
        "resizable": true,
@@ -391,9 +391,9 @@ Based on research of similar applications and cross-platform development best pr
   - React 19.1.0 + TypeScript 5.8.3 + Vite 7.0.4
   - Tauri 2.9.2 (backend), @tauri-apps/api ^2 (frontend)
 - ✅ Configuration files set up
-  - package.json (name: resonator)
-  - tauri.conf.json (productName: Resonator, identifier: com.flup.resonator)
-  - Cargo.toml (name: resonator, lib: resonator_lib)
+  - package.json (name: resonatify)
+  - tauri.conf.json (productName: Resonatify, identifier: com.flup.resonatify)
+  - Cargo.toml (name: resonatify, lib: resonatify_lib)
 - ✅ Project structure configured
   - Frontend: src/ with components/, hooks/, stores/, types/, utils/
   - Backend: src-tauri/src/ with audio/, scheduler/, db/, commands/
@@ -416,7 +416,7 @@ Based on research of similar applications and cross-platform development best pr
 **Technical Considerations:**
 - ✅ Configure Tauri security (CSP, allowlist) - CSP set to null for development
 - ✅ Set up icon assets for different platforms - Icons provided by template (icon.png, icon.icns, icon.ico)
-- ✅ Configure app identifier for macOS bundle - Set to com.flup.resonator
+- ✅ Configure app identifier for macOS bundle - Set to com.flup.resonatify
 
 **Progress Notes:**
 - Successfully created Tauri 2.9.2 project with React 19.1 and TypeScript 5.8
@@ -1111,7 +1111,7 @@ Based on research of similar applications and cross-platform development best pr
   - ✅ Configured directory structure (frontend, backend, tests)
   - ✅ Installed all core dependencies (zustand, react-hook-form, date-fns, tailwindcss)
   - ✅ Added Rust dependencies (tokio, chrono, rodio, rusqlite)
-  - ✅ Configured Tauri settings (identifier: com.flup.resonator)
+  - ✅ Configured Tauri settings (identifier: com.flup.resonatify)
   - ✅ Verified builds: Backend (cargo check) and Frontend (npm build)
 - ✅ 2.3 UI Foundation Setup (Complete: 2025-11-13)
   - ✅ Configured Tailwind CSS v4 with custom theme and design system
