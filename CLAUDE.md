@@ -271,6 +271,122 @@ pub enum RepeatType {
   - `fix: correct time zone calculation in scheduler`
   - `docs: update API documentation`
 
+### Git Branching Strategy
+
+**Overview**: Simple Git workflow optimized for solo developers and small teams.
+
+**Branch Structure:**
+
+1. **`main` Branch**
+   - Production-ready code only
+   - Always stable and deployable
+   - Protected: requires PR for changes
+   - Tagged with version numbers for releases
+
+2. **Feature Branches**
+   - Branch from: `main`
+   - Merge back to: `main` via Pull Request
+   - Delete after merge
+
+3. **Branch Naming Conventions:**
+   ```
+   feature/schedule-repeat-logic     # New features
+   bugfix/audio-playback-crash       # Bug fixes
+   docs/update-architecture          # Documentation
+   refactor/database-layer           # Code refactoring
+   test/scheduler-engine             # Test additions
+   chore/update-dependencies         # Maintenance tasks
+   ```
+
+**Workflow:**
+
+1. **Starting New Work**
+   ```bash
+   # Ensure main is up to date
+   git checkout main
+   git pull origin main
+
+   # Create and checkout feature branch
+   git checkout -b feature/my-new-feature
+   ```
+
+2. **During Development**
+   ```bash
+   # Make changes and commit frequently
+   git add .
+   git commit -m "feat: add initial schedule repeat UI"
+
+   # Push to remote for backup/collaboration
+   git push origin feature/my-new-feature
+   ```
+
+3. **Creating Pull Request**
+   - Push feature branch to GitHub
+   - Create PR from feature branch → `main`
+   - Add descriptive title and description
+   - Reference related issues if applicable
+   - Self-review changes before requesting review
+
+4. **PR Requirements**
+   - All tests must pass
+   - Code follows style guidelines (rustfmt, ESLint)
+   - No merge conflicts with `main`
+   - Meaningful commit messages
+   - Updated documentation if needed
+
+5. **Merging**
+   ```bash
+   # After PR approval, merge via GitHub UI
+   # Use "Squash and merge" for cleaner history (optional)
+   # Delete feature branch after merge
+
+   # Update local main
+   git checkout main
+   git pull origin main
+   git branch -d feature/my-new-feature
+   ```
+
+**Release Process:**
+
+```bash
+# Tag releases on main branch
+git checkout main
+git pull origin main
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
+**Quick Reference:**
+
+```bash
+# Create feature branch
+git checkout -b feature/new-feature
+
+# Regular commits
+git add .
+git commit -m "feat: descriptive message"
+git push origin feature/new-feature
+
+# Update feature branch with latest main
+git checkout main
+git pull origin main
+git checkout feature/new-feature
+git merge main
+
+# After PR merged, clean up
+git checkout main
+git pull origin main
+git branch -d feature/new-feature
+```
+
+**Best Practices:**
+- Keep feature branches short-lived (< 1 week)
+- Commit frequently with clear messages
+- Push daily for backup
+- Merge `main` into your feature branch regularly to avoid conflicts
+- Delete merged branches promptly
+- Use draft PRs for work-in-progress
+
 ---
 
 ## Common Commands
