@@ -30,7 +30,7 @@ tokio = { version = "1", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
 
 # Audio playback
-rodio = "0.19"
+rodio = { version = "0.19", features = ["symphonia"] }
 
 # Database
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "macros", "sqlite", "chrono", "uuid"] }
@@ -40,6 +40,10 @@ uuid = { version = "1", features = ["serde", "v4"] }
 
 # Error handling
 thiserror = "1"
+
+[dev-dependencies]
+hound = "3"
+tempfile = "3"
 
 # Tauri plugins (to be added when needed in Phase 4)
 # tauri-plugin-autostart = "2"
