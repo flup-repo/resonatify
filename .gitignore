@@ -1,0 +1,238 @@
+# Resonator - Git Ignore File
+
+# ====================
+# Rust / Cargo
+# ====================
+# Build artifacts
+target/
+**/*.rs.bk
+*.pdb
+
+# Cargo.lock for libraries (keep for applications)
+# Cargo.lock
+
+# ====================
+# Node / NPM
+# ====================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# ====================
+# Tauri
+# ====================
+# Tauri build output
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# WiX Toolset (Windows installer)
+*.wixobj
+*.wixpdb
+
+# macOS specific
+*.app
+*.dmg
+
+# ====================
+# IDE / Editor
+# ====================
+# VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.history/
+
+# IntelliJ / WebStorm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ====================
+# Operating System
+# ====================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ====================
+# Logs
+# ====================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ====================
+# Testing
+# ====================
+coverage/
+*.lcov
+.nyc_output/
+lib-cov/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ====================
+# Environment & Secrets
+# ====================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Credentials
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.json
+secrets.json
+
+# ====================
+# Database
+# ====================
+# SQLite databases (development)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Keep example/seed databases if needed
+!seed.db
+!example.db
+
+# ====================
+# Build & Distribution
+# ====================
+# Production builds
+build/
+out/
+
+# Tauri bundler output
+src-tauri/target/release/bundle/
+
+# Installer artifacts
+*.exe
+*.deb
+*.rpm
+*.AppImage
+
+# ====================
+# Temporary Files
+# ====================
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+
+# ====================
+# Documentation Build
+# ====================
+.docusaurus/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# ====================
+# Package Manager Locks
+# ====================
+# Keep package-lock.json for consistency
+# package-lock.json
+
+# Yarn
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ====================
+# Misc
+# ====================
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Patch files
+*.patch
+*.diff
+
+# Archive files (unless intentionally versioned)
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
