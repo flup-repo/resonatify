@@ -3,7 +3,7 @@ use sqlx::{query, query_as, SqlitePool};
 use uuid::Uuid;
 
 use super::models::{CreateScheduleInput, Schedule, ScheduleRow, UpdateScheduleInput};
-use super::{DbResult, DatabaseError};
+use super::{DatabaseError, DbResult};
 
 #[derive(Clone)]
 pub struct ScheduleRepository {
@@ -67,14 +67,11 @@ impl ScheduleRepository {
     }
 
     pub async fn get_all(&self) -> DbResult<Vec<Schedule>> {
-        let rows = query_as::<_, ScheduleRow>(
-            r#"SELECT * FROM schedules ORDER BY scheduled_time"#,
-        )
-        .fetch_all(&self.pool)
-        .await?;
+        let rows = query_as::<_, ScheduleRow>(r#"SELECT * FROM schedules ORDER BY scheduled_time"#)
+            .fetch_all(&self.pool)
+            .await?;
 
-        rows
-            .into_iter()
+        rows.into_iter()
             .map(Schedule::try_from)
             .collect::<Result<Vec<_>, _>>()
             .map_err(DatabaseError::from)
@@ -96,8 +93,7 @@ impl ScheduleRepository {
         .fetch_all(&self.pool)
         .await?;
 
-        rows
-            .into_iter()
+        rows.into_iter()
             .map(Schedule::try_from)
             .collect::<Result<Vec<_>, _>>()
             .map_err(DatabaseError::from)

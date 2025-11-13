@@ -73,8 +73,7 @@ impl PlaybackHistoryRepository {
         .fetch_all(&self.pool)
         .await?;
 
-        rows
-            .into_iter()
+        rows.into_iter()
             .map(PlaybackHistory::try_from)
             .collect::<Result<Vec<_>, _>>()
             .map_err(Into::into)

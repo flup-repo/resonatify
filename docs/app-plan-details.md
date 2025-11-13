@@ -572,42 +572,37 @@ Based on research of similar applications and cross-platform development best pr
 
 **Dependencies:** 3.1 Data Persistence Layer
 
-### 3.3 Scheduling Engine
+### 3.3 Scheduling Engine ✅ COMPLETE
 
-**Estimated Duration:** 2 weeks
-**Complexity:** High
+**Status:** ✅ Complete (2025-11-13)
 
-**Tasks:**
-1. Design scheduling architecture
-2. Implement time calculation logic (next execution time, should execute now)
-3. Implement repeat logic (once, daily, weekly, weekdays, weekends, custom)
-4. Implement scheduler engine core:
-   - Start/stop engine
-   - Add/remove/update schedules dynamically
-   - Background task management using tokio
-5. Implement execution logic (play audio at scheduled time)
-6. Add scheduler monitoring (status, upcoming executions)
-7. Expose Tauri commands
-8. Write comprehensive tests (time zones, DST, edge cases)
+**Summary of Work:**
+- Built a tokio-driven scheduler engine that loads enabled schedules, spawns cancellable per-schedule tasks, and orchestrates playback through the shared audio service.
+- Implemented comprehensive time calculation utilities covering once, daily, weekday/weekend, weekly selections, and custom interval repeat modes with DST-safe conversions and a grace window for near-miss executions.
+- Added runtime monitoring with serialized status snapshots, upcoming execution queries, and graceful start/stop/reload flows exposed as new Tauri commands.
+- Persisted playback outcomes and automatic disabling of one-shot schedules using the repository layer while capturing history entries for auditability.
+
+**Completed Tasks:**
+1. ✅ Designed the scheduling architecture with managed async workers and centralized state tracking.
+2. ✅ Implemented next-execution logic and repeat handling for every supported cadence, including custom interval math.
+3. ✅ Wired execution loop to invoke audio playback, record success/failure history, and disable once-only schedules after they run.
+4. ✅ Added scheduler monitoring endpoints (status, upcoming) plus lifecycle controls (start/stop/reload) surfaced via Tauri commands.
+5. ✅ Authored unit tests for time calculations and the scheduler loop using a mock audio controller to validate behaviour without hardware dependencies.
 
 **Deliverables:**
-- Fully functional scheduling engine
-- Time calculation and repeat logic
-- Background task management
-- Comprehensive test suite
+- ✅ Production-ready scheduling engine with cancellable background task management.
+- ✅ Time calculation + repeat logic module with DST-aware helpers and grace handling.
+- ✅ Scheduler runtime status + upcoming execution reporting pipeline.
+- ✅ Tauri IPC commands for scheduler lifecycle and telemetry access.
+- ✅ Test suite covering scheduler execution paths and temporal edge cases.
 
 **Technical Considerations:**
-- Use tokio::time::sleep for async delays
-- Handle system sleep/wake (macOS power events)
-- Persist schedule state to survive app restarts
-- Consider missed schedules (if app was closed)
-- Handle time zone changes
-- Implement graceful shutdown
-- Add logging for debugging
+- Leveraged `tokio-util` cancellation tokens to stop schedule workers cleanly during reloads and shutdowns.
+- Stored runtime metadata in `Arc<RwLock<...>>` snapshots so commands can read status without blocking task progress.
+- Applied a one-minute grace period so schedules due moments before startup execute immediately, mitigating sleep/wake drift.
+- Recorded playback outcomes (success/failure/skipped) through the history repository for debugging and analytics.
 
-**Dependencies:**
-- 3.1 Data Persistence Layer
-- 3.2 Audio Playback System
+**Dependencies:** 3.1 Data Persistence Layer, 3.2 Audio Playback System
 
 ### 3.4 Frontend: Schedule Management UI
 
@@ -1055,7 +1050,7 @@ Based on research of similar applications and cross-platform development best pr
 |-------|----------|------------|----------|--------|
 | Research & Planning | 1-2 weeks | Week 1 | Week 2 | ✅ Complete (1.1 ✅, 1.2 ✅, 1.3 ✅) |
 | Project Setup | 3-5 days | Week 2 | Week 3 | ✅ Complete (2.1 ✅, 2.2 ✅, 2.3 ✅) |
-| Core Development | 6-8 weeks | Week 3 | Week 10 | 🟡 In Progress (3.1 ✅) |
+| Core Development | 6-8 weeks | Week 3 | Week 10 | 🟡 In Progress (3.1-3.3 ✅) |
 | macOS Implementation | 1 week | Week 10 | Week 11 | ⚪ Not Started |
 | Testing | 1-2 weeks | Week 11 | Week 13 | ⚪ Not Started |
 | Deployment | 1 week | Week 13 | Week 14 | ⚪ Not Started |
@@ -1092,10 +1087,10 @@ Based on research of similar applications and cross-platform development best pr
   - ✅ Set up TypeScript path aliases (@/*)
   - ✅ Verified builds: Frontend (377ms) and Backend (0.46s)
 
-**Phase 3 Progress:** 2/6 tasks complete (33%)
+**Phase 3 Progress:** 3/6 tasks complete (50%)
 - ✅ 3.1 Data Persistence Layer — SQLite migrations, repositories, and tests in place
 - ✅ 3.2 Audio Playback System — rodio engine, validation, and Tauri commands implemented
-- ⏳ 3.3 Scheduling Engine — pending persistence-driven scheduling logic
+- ✅ 3.3 Scheduling Engine — async scheduler core, time calculators, commands, and tests delivered
 - ⏳ 3.4 Schedule Management UI — pending CRUD integration
 - ⏳ 3.5 Settings UI — pending persistence wiring
 - ⏳ 3.6 System Tray Integration — pending scheduler engine

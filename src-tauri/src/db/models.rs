@@ -17,7 +17,11 @@ pub enum RepeatType {
 impl RepeatType {
     pub fn repeat_days(&self) -> Option<Vec<u8>> {
         match self {
-            RepeatType::Weekly { days } => Some(days.iter().map(|d| d.num_days_from_sunday() as u8).collect()),
+            RepeatType::Weekly { days } => Some(
+                days.iter()
+                    .map(|d| d.num_days_from_sunday() as u8)
+                    .collect(),
+            ),
             _ => None,
         }
     }
@@ -154,7 +158,11 @@ impl TryFrom<PlaybackHistoryRow> for PlaybackHistory {
             "success" => PlaybackStatus::Success,
             "failed" => PlaybackStatus::Failed,
             "skipped" => PlaybackStatus::Skipped,
-            other => return Err(ModelConversionError::UnknownPlaybackStatus(other.to_string())),
+            other => {
+                return Err(ModelConversionError::UnknownPlaybackStatus(
+                    other.to_string(),
+                ))
+            }
         };
 
         Ok(Self {

@@ -209,10 +209,7 @@ mod tests {
         let recent = history.list_recent(10).await.unwrap();
         assert_eq!(recent.len(), 1);
 
-        history
-            .delete_for_schedule(&schedule.id)
-            .await
-            .unwrap();
+        history.delete_for_schedule(&schedule.id).await.unwrap();
 
         let recent_after_delete = history.list_recent(10).await.unwrap();
         assert!(recent_after_delete.is_empty());
