@@ -1,5 +1,5 @@
 use chrono::Local;
-use sqlx::SqlitePool;
+use sqlx::{query, query_as, SqlitePool};
 use uuid::Uuid;
 
 use super::models::{PlaybackHistory, PlaybackHistoryRow, PlaybackStatus};
@@ -28,7 +28,7 @@ impl PlaybackHistoryRepository {
             PlaybackStatus::Skipped => "skipped",
         };
 
-        sqlx::query!(
+        query(
             r#"
                 INSERT INTO audio_playback_history (
                     id,
@@ -38,12 +38,12 @@ impl PlaybackHistoryRepository {
                     error_message
                 ) VALUES (?, ?, ?, ?, ?)
             "#,
-            id,
-            schedule_id,
-            Local::now().to_rfc3339(),
-            status_str,
-            error_message
         )
+        .bind(&id)
+        .bind(schedule_id)
+        .bind(Local::now().to_rfc3339())
+        .bind(status_str)
+        .bind(error_message)
         .execute(&self.pool)
         .await?;
 
@@ -51,11 +51,10 @@ impl PlaybackHistoryRepository {
     }
 
     pub async fn get_by_id(&self, id: &str) -> DbResult<PlaybackHistory> {
-        let row = sqlx::query_as!(
-            PlaybackHistoryRow,
+        let row = query_as::<_, PlaybackHistoryRow>(
             r#"SELECT * FROM audio_playback_history WHERE id = ?"#,
-            id
         )
+        .bind(id)
         .fetch_one(&self.pool)
         .await?;
 
@@ -63,15 +62,14 @@ impl PlaybackHistoryRepository {
     }
 
     pub async fn list_recent(&self, limit: i64) -> DbResult<Vec<PlaybackHistory>> {
-        let rows = sqlx::query_as!(
-            PlaybackHistoryRow,
+        let rows = query_as::<_, PlaybackHistoryRow>(
             r#"
                 SELECT * FROM audio_playback_history
                 ORDER BY played_at DESC
                 LIMIT ?
             "#,
-            limit
         )
+        .bind(limit)
         .fetch_all(&self.pool)
         .await?;
 
@@ -83,12 +81,10 @@ impl PlaybackHistoryRepository {
     }
 
     pub async fn delete_for_schedule(&self, schedule_id: &str) -> DbResult<()> {
-        sqlx::query!(
-            r#"DELETE FROM audio_playback_history WHERE schedule_id = ?"#,
-            schedule_id
-        )
-        .execute(&self.pool)
-        .await?;
+        query(r#"DELETE FROM audio_playback_history WHERE schedule_id = ?"#)
+            .bind(schedule_id)
+            .execute(&self.pool)
+            .await?;
 
         Ok(())
     }

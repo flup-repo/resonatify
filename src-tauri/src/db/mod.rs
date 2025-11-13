@@ -3,12 +3,13 @@ pub mod playback_history;
 pub mod schedules;
 pub mod settings;
 
+use sqlx::migrate::MigrateError;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
 use sqlx::SqlitePool;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tauri::path::BaseDirectory;
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 use self::models::ModelConversionError;
 use self::playback_history::PlaybackHistoryRepository;
@@ -27,6 +28,8 @@ pub enum DatabaseError {
     Serde(#[from] serde_json::Error),
     #[error("invalid data: {0}")]
     InvalidData(String),
+    #[error("migration error: {0}")]
+    Migration(#[from] MigrateError),
 }
 
 pub type DbResult<T> = Result<T, DatabaseError>;

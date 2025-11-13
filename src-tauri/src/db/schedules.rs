@@ -1,8 +1,8 @@
 use chrono::Local;
-use sqlx::SqlitePool;
+use sqlx::{query, query_as, SqlitePool};
 use uuid::Uuid;
 
-use super::models::{CreateScheduleInput, RepeatType, Schedule, ScheduleRow, UpdateScheduleInput};
+use super::models::{CreateScheduleInput, Schedule, ScheduleRow, UpdateScheduleInput};
 use super::{DbResult, DatabaseError};
 
 #[derive(Clone)]
@@ -34,7 +34,7 @@ impl ScheduleRepository {
             .map(|days| serde_json::to_string(&days))
             .transpose()?;
 
-        sqlx::query!(
+        query(
             r#"
                 INSERT INTO schedules (
                     id,
@@ -49,17 +49,17 @@ impl ScheduleRepository {
                     updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             "#,
-            id,
-            name,
-            audio_file_path,
-            scheduled_time,
-            enabled as i64,
-            repeat_type_json,
-            repeat_days_json,
-            volume as i64,
-            now,
-            now
         )
+        .bind(&id)
+        .bind(name)
+        .bind(audio_file_path)
+        .bind(scheduled_time)
+        .bind(enabled as i64)
+        .bind(repeat_type_json)
+        .bind(repeat_days_json)
+        .bind(volume as i64)
+        .bind(&now)
+        .bind(&now)
         .execute(&self.pool)
         .await?;
 
@@ -67,9 +67,8 @@ impl ScheduleRepository {
     }
 
     pub async fn get_all(&self) -> DbResult<Vec<Schedule>> {
-        let rows = sqlx::query_as!(
-            ScheduleRow,
-            r#"SELECT * FROM schedules ORDER BY scheduled_time"#
+        let rows = query_as::<_, ScheduleRow>(
+            r#"SELECT * FROM schedules ORDER BY scheduled_time"#,
         )
         .fetch_all(&self.pool)
         .await?;
@@ -82,21 +81,17 @@ impl ScheduleRepository {
     }
 
     pub async fn get_by_id(&self, id: &str) -> DbResult<Schedule> {
-        let row = sqlx::query_as!(
-            ScheduleRow,
-            r#"SELECT * FROM schedules WHERE id = ?"#,
-            id
-        )
-        .fetch_one(&self.pool)
-        .await?;
+        let row = query_as::<_, ScheduleRow>(r#"SELECT * FROM schedules WHERE id = ?"#)
+            .bind(id)
+            .fetch_one(&self.pool)
+            .await?;
 
         Schedule::try_from(row).map_err(DatabaseError::from)
     }
 
     pub async fn get_enabled(&self) -> DbResult<Vec<Schedule>> {
-        let rows = sqlx::query_as!(
-            ScheduleRow,
-            r#"SELECT * FROM schedules WHERE enabled = 1 ORDER BY scheduled_time"#
+        let rows = query_as::<_, ScheduleRow>(
+            r#"SELECT * FROM schedules WHERE enabled = 1 ORDER BY scheduled_time"#,
         )
         .fetch_all(&self.pool)
         .await?;
@@ -138,7 +133,7 @@ impl ScheduleRepository {
             .map(|days| serde_json::to_string(&days))
             .transpose()?;
 
-        sqlx::query!(
+        query(
             r#"
                 UPDATE schedules
                 SET name = ?,
@@ -151,16 +146,16 @@ impl ScheduleRepository {
                     updated_at = ?
                 WHERE id = ?
             "#,
-            current.name,
-            current.audio_file_path,
-            current.scheduled_time,
-            current.enabled as i64,
-            repeat_type_json,
-            repeat_days_json,
-            current.volume as i64,
-            now,
-            id
         )
+        .bind(&current.name)
+        .bind(&current.audio_file_path)
+        .bind(&current.scheduled_time)
+        .bind(current.enabled as i64)
+        .bind(repeat_type_json)
+        .bind(repeat_days_json)
+        .bind(current.volume as i64)
+        .bind(&now)
+        .bind(id)
         .execute(&self.pool)
         .await?;
 
@@ -168,7 +163,8 @@ impl ScheduleRepository {
     }
 
     pub async fn delete(&self, id: &str) -> DbResult<()> {
-        sqlx::query!(r#"DELETE FROM schedules WHERE id = ?"#, id)
+        query(r#"DELETE FROM schedules WHERE id = ?"#)
+            .bind(id)
             .execute(&self.pool)
             .await?;
 

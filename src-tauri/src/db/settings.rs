@@ -1,4 +1,4 @@
-use sqlx::SqlitePool;
+use sqlx::{query, query_as, SqlitePool};
 
 use super::models::{Setting, SettingRow};
 use super::DbResult;
@@ -14,7 +14,7 @@ impl SettingsRepository {
     }
 
     pub async fn get_all(&self) -> DbResult<Vec<Setting>> {
-        let rows = sqlx::query_as!(SettingRow, r#"SELECT * FROM settings"#)
+        let rows = query_as::<_, SettingRow>(r#"SELECT * FROM settings"#)
             .fetch_all(&self.pool)
             .await?;
 
@@ -22,19 +22,16 @@ impl SettingsRepository {
     }
 
     pub async fn get(&self, key: &str) -> DbResult<Option<Setting>> {
-        let row = sqlx::query_as!(
-            SettingRow,
-            r#"SELECT * FROM settings WHERE key = ?"#,
-            key
-        )
-        .fetch_optional(&self.pool)
-        .await?;
+        let row = query_as::<_, SettingRow>(r#"SELECT * FROM settings WHERE key = ?"#)
+            .bind(key)
+            .fetch_optional(&self.pool)
+            .await?;
 
         Ok(row.map(Setting::from))
     }
 
     pub async fn upsert(&self, key: &str, value: &str) -> DbResult<()> {
-        sqlx::query!(
+        query(
             r#"
                 INSERT INTO settings (key, value)
                 VALUES (?, ?)
@@ -42,9 +39,9 @@ impl SettingsRepository {
                     value = excluded.value,
                     updated_at = CURRENT_TIMESTAMP
             "#,
-            key,
-            value
         )
+        .bind(key)
+        .bind(value)
         .execute(&self.pool)
         .await?;
 
@@ -52,7 +49,8 @@ impl SettingsRepository {
     }
 
     pub async fn delete(&self, key: &str) -> DbResult<()> {
-        sqlx::query!(r#"DELETE FROM settings WHERE key = ?"#, key)
+        query(r#"DELETE FROM settings WHERE key = ?"#)
+            .bind(key)
             .execute(&self.pool)
             .await?;
 
