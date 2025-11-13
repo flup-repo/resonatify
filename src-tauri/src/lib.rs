@@ -16,6 +16,7 @@ fn greet(name: &str) -> String {
 pub struct AppState {
     pub database: Database,
     pub audio: audio::AudioService,
+    pub scheduler: scheduler::SchedulerEngine,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -29,9 +30,16 @@ pub fn run() {
             let audio_service = audio::AudioService::new()
                 .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
 
+            let scheduler_engine =
+                scheduler::SchedulerEngine::new(database.clone(), audio_service.clone());
+
+            tauri::async_runtime::block_on(scheduler_engine.start())
+                .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
+
             app.manage(AppState {
                 database,
                 audio: audio_service,
+                scheduler: scheduler_engine,
             });
 
             Ok(())
@@ -42,6 +50,11 @@ pub fn run() {
             commands::audio::play_audio_file,
             commands::audio::stop_audio,
             commands::audio::get_audio_status,
+            commands::scheduler::start_scheduler,
+            commands::scheduler::stop_scheduler,
+            commands::scheduler::reload_scheduler,
+            commands::scheduler::get_scheduler_status,
+            commands::scheduler::get_upcoming_executions,
             greet
         ])
         .run(tauri::generate_context!())
