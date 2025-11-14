@@ -26,6 +26,7 @@ impl ScheduleRepository {
             enabled,
             repeat_type,
             volume,
+            last_run_at,
         } = input;
 
         let repeat_type_json = serde_json::to_string(&repeat_type)?;
@@ -45,9 +46,10 @@ impl ScheduleRepository {
                     repeat_type,
                     repeat_days,
                     volume,
+                    last_run_at,
                     created_at,
                     updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             "#,
         )
         .bind(&id)
@@ -58,6 +60,7 @@ impl ScheduleRepository {
         .bind(repeat_type_json)
         .bind(repeat_days_json)
         .bind(volume as i64)
+        .bind(last_run_at)
         .bind(&now)
         .bind(&now)
         .execute(&self.pool)

@@ -13,6 +13,7 @@ const GRACE_PERIOD: Duration = Duration::minutes(1);
 pub fn next_execution_time(
     schedule: &Schedule,
     reference: DateTime<Local>,
+    last_run: Option<DateTime<Local>>,
 ) -> Result<Option<DateTime<Local>>, SchedulerError> {
     if !schedule.enabled {
         return Ok(None);
@@ -26,23 +27,26 @@ pub fn next_execution_time(
     })?;
 
     let next = match &schedule.repeat_type {
-        RepeatType::Once | RepeatType::Daily => {
-            Some(find_next_matching_day(reference, time, |_, _| true))
-        }
-        RepeatType::Weekdays => Some(find_next_matching_day(reference, time, |date, _| {
+        RepeatType::Once | RepeatType::Daily => Some(find_next_matching_day(
+            reference,
+            time,
+            last_run,
+            |_, _| true,
+        )),
+        RepeatType::Weekdays => Some(find_next_matching_day(reference, time, last_run, |date, _| {
             matches!(
                 date.weekday(),
                 Weekday::Mon | Weekday::Tue | Weekday::Wed | Weekday::Thu | Weekday::Fri
             )
         })),
-        RepeatType::Weekends => Some(find_next_matching_day(reference, time, |date, _| {
+        RepeatType::Weekends => Some(find_next_matching_day(reference, time, last_run, |date, _| {
             matches!(date.weekday(), Weekday::Sat | Weekday::Sun)
         })),
         RepeatType::Weekly { days } => {
             if days.is_empty() {
                 None
             } else {
-                Some(find_next_matching_day(reference, time, |date, _| {
+                Some(find_next_matching_day(reference, time, last_run, |date, _| {
                     days.iter().any(|d| *d == date.weekday())
                 }))
             }
@@ -59,6 +63,7 @@ pub fn next_execution_time(
                 reference,
                 time,
                 *interval_minutes as i64,
+                last_run,
             ))
         }
     };
@@ -74,6 +79,7 @@ fn parse_time(value: &str) -> Result<NaiveTime, String> {
 fn find_next_matching_day<F>(
     reference: DateTime<Local>,
     time: NaiveTime,
+    last_run: Option<DateTime<Local>>,
     predicate: F,
 ) -> DateTime<Local>
 where
@@ -89,7 +95,7 @@ where
                 return candidate;
             }
 
-            if reference - candidate <= GRACE_PERIOD {
+            if reference - candidate <= GRACE_PERIOD && should_fire_with_grace(reference, last_run) {
                 return reference;
             }
         }
@@ -102,6 +108,7 @@ fn find_next_custom_interval(
     reference: DateTime<Local>,
     time: NaiveTime,
     interval_minutes: i64,
+    last_run: Option<DateTime<Local>>,
 ) -> DateTime<Local> {
     let interval_minutes = interval_minutes.max(1);
     let interval = Duration::minutes(interval_minutes);
@@ -111,7 +118,7 @@ fn find_next_custom_interval(
         return candidate;
     }
 
-    if reference - candidate <= GRACE_PERIOD {
+    if reference - candidate <= GRACE_PERIOD && should_fire_with_grace(reference, last_run) {
         return reference;
     }
 
@@ -144,6 +151,16 @@ fn combine(date: NaiveDate, time: NaiveTime) -> DateTime<Local> {
     }
 }
 
+fn should_fire_with_grace(
+    reference: DateTime<Local>,
+    last_run: Option<DateTime<Local>>,
+) -> bool {
+    match last_run {
+        Some(last) => reference - last >= GRACE_PERIOD,
+        None => true,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -160,6 +177,7 @@ mod tests {
             volume: 80,
             created_at: "".into(),
             updated_at: "".into(),
+            last_run_at: None,
         }
     }
 
@@ -169,7 +187,7 @@ mod tests {
         let schedule_time = reference.format("%H:%M").to_string();
         let schedule = schedule_with_repeat(RepeatType::Daily, &schedule_time);
 
-        let next = next_execution_time(&schedule, reference).unwrap().unwrap();
+        let next = next_execution_time(&schedule, reference, None).unwrap().unwrap();
 
         let diff = next - reference;
         assert!(diff >= Duration::seconds(0));
@@ -184,7 +202,7 @@ mod tests {
             .with_timezone(&Local);
         let schedule = schedule_with_repeat(RepeatType::Weekdays, "09:30");
 
-        let next = next_execution_time(&schedule, reference).unwrap().unwrap();
+        let next = next_execution_time(&schedule, reference, None).unwrap().unwrap();
 
         assert_eq!(next.weekday(), Weekday::Mon);
     }
@@ -201,7 +219,7 @@ mod tests {
             "08:00",
         );
 
-        let next = next_execution_time(&schedule, reference).unwrap().unwrap();
+        let next = next_execution_time(&schedule, reference, None).unwrap().unwrap();
 
         assert!(next > reference);
     }

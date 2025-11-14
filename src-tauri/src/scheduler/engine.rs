@@ -324,9 +324,11 @@ async fn run_schedule_task(
 ) {
     let playback_repo = database.playback_history_repository();
     let schedule_repo = database.schedule_repository();
-    let schedule = data.schedule().await;
 
     loop {
+        let schedule = data.schedule().await;
+        let state_snapshot = data.state().await;
+
         if cancel_token.is_cancelled() {
             data.update_state(|state| {
                 state.status = ScheduleStatus::Stopped;
@@ -346,7 +348,7 @@ async fn run_schedule_task(
         }
 
         let now = Local::now();
-        match next_execution_time(&schedule, now) {
+        match next_execution_time(&schedule, now, state_snapshot.last_run) {
             Ok(Some(next_run)) => {
                 data.update_state(|state| {
                     state.next_run = Some(next_run);
@@ -390,11 +392,12 @@ async fn run_schedule_task(
 
                 match play_result {
                     Ok(_) => {
+                        let executed_at = Local::now();
+
                         let _ = playback_repo
                             .record(&schedule.id, PlaybackStatus::Success, None)
                             .await;
 
-                        let executed_at = Local::now();
                         data.update_state(|state| {
                             state.last_run = Some(executed_at);
                             state.status = ScheduleStatus::Idle;
@@ -549,6 +552,7 @@ mod tests {
                 enabled: true,
                 repeat_type: RepeatType::Once,
                 volume: 70,
+                last_run_at: None,
             })
             .await
             .unwrap();
