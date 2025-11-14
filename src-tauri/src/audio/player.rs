@@ -151,16 +151,34 @@ impl AudioPlayer {
 impl AudioPlayer {
     fn create_decoder(path: &Path) -> Result<Decoder<BufReader<File>>, AudioError> {
         let file = File::open(path)?;
+        let metadata = file.metadata()?;
+        let byte_len = metadata.len();
+        let extension = path
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .map(|ext| ext.to_lowercase());
         let reader = BufReader::new(file);
 
-        Self::build_decoder(reader)
+        Self::build_decoder(reader, extension.as_deref(), Some(byte_len))
     }
 
-    fn build_decoder<R>(reader: R) -> Result<Decoder<R>, AudioError>
+    fn build_decoder<R>(
+        reader: R,
+        extension_hint: Option<&str>,
+        byte_len: Option<u64>,
+    ) -> Result<Decoder<R>, AudioError>
     where
         R: Read + Seek + Send + Sync + 'static,
     {
-        let builder = DecoderBuilder::new().with_data(reader);
+        let mut builder = DecoderBuilder::new().with_data(reader);
+
+        if let Some(len) = byte_len {
+            builder = builder.with_byte_len(len).with_seekable(true);
+        }
+
+        if let Some(hint) = extension_hint {
+            builder = builder.with_hint(hint);
+        }
 
         panic::catch_unwind(AssertUnwindSafe(|| builder.build()))
             .map_err(|_| AudioError::Decoder("failed to decode audio file".into()))?

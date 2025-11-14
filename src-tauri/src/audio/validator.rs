@@ -90,8 +90,10 @@ impl AudioValidator {
         }
 
         let file = std::fs::File::open(&canonical_path)?;
+        let metadata = file.metadata()?;
+        let byte_len = metadata.len();
         let reader = BufReader::new(file);
-        let decoder = Self::build_decoder(reader)?;
+        let decoder = Self::build_decoder(reader, Some(extension.as_str()), Some(byte_len))?;
 
         let duration_ms = decoder
             .total_duration()
@@ -119,11 +121,23 @@ impl AudioValidator {
 }
 
 impl AudioValidator {
-    fn build_decoder<R>(reader: R) -> Result<Decoder<R>, AudioValidationError>
+    fn build_decoder<R>(
+        reader: R,
+        extension_hint: Option<&str>,
+        byte_len: Option<u64>,
+    ) -> Result<Decoder<R>, AudioValidationError>
     where
         R: Read + Seek + Send + Sync + 'static,
     {
-        let builder = DecoderBuilder::new().with_data(reader);
+        let mut builder = DecoderBuilder::new().with_data(reader);
+
+        if let Some(len) = byte_len {
+            builder = builder.with_byte_len(len).with_seekable(true);
+        }
+
+        if let Some(hint) = extension_hint {
+            builder = builder.with_hint(hint);
+        }
 
         panic::catch_unwind(AssertUnwindSafe(|| builder.build()))
             .map_err(|_| AudioValidationError::Decode("failed to decode audio file".into()))?
