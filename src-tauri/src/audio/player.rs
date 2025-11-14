@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
 use std::panic::{self, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -7,7 +7,7 @@ use std::thread::{self, JoinHandle};
 use std::time::Duration;
 
 use chrono::Utc;
-use rodio::{Decoder, OutputStream, OutputStreamHandle, Sink};
+use rodio::{decoder::DecoderBuilder, Decoder, OutputStream, OutputStreamBuilder, Sink};
 use serde::Serialize;
 
 use crate::audio::error::AudioError;
@@ -23,7 +23,6 @@ pub struct PlaybackContext {
 
 pub struct AudioPlayer {
     _stream: OutputStream,
-    handle: OutputStreamHandle,
     sink: Option<Arc<Sink>>,
     current: Option<PlaybackContext>,
     fade_task: Option<JoinHandle<()>>,
@@ -31,14 +30,13 @@ pub struct AudioPlayer {
 
 impl AudioPlayer {
     pub fn new() -> Result<Self, AudioError> {
-        let (stream, handle) = OutputStream::try_default().map_err(|err| match err {
+        let stream = OutputStreamBuilder::open_default_stream().map_err(|err| match err {
             rodio::StreamError::NoDevice => AudioError::NoOutputDevice,
             other => AudioError::Stream(other),
         })?;
 
         Ok(Self {
             _stream: stream,
-            handle,
             sink: None,
             current: None,
             fade_task: None,
@@ -54,7 +52,7 @@ impl AudioPlayer {
         self.abort_fade();
         self.stop_immediate();
 
-        let sink = Arc::new(Sink::try_new(&self.handle).map_err(AudioError::Sink)?);
+        let sink = Arc::new(Sink::connect_new(self._stream.mixer()));
         let decoder = Self::create_decoder(&path)?;
 
         sink.set_volume(0.0);
@@ -155,7 +153,16 @@ impl AudioPlayer {
         let file = File::open(path)?;
         let reader = BufReader::new(file);
 
-        panic::catch_unwind(AssertUnwindSafe(|| Decoder::new(reader)))
+        Self::build_decoder(reader)
+    }
+
+    fn build_decoder<R>(reader: R) -> Result<Decoder<R>, AudioError>
+    where
+        R: Read + Seek + Send + Sync + 'static,
+    {
+        let builder = DecoderBuilder::new().with_data(reader);
+
+        panic::catch_unwind(AssertUnwindSafe(|| builder.build()))
             .map_err(|_| AudioError::Decoder("failed to decode audio file".into()))?
             .map_err(|err| AudioError::Decoder(err.to_string()))
     }
