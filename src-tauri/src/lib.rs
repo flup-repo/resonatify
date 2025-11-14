@@ -60,6 +60,9 @@ pub fn run() {
             commands::schedules::update_schedule,
             commands::schedules::delete_schedule,
             commands::schedules::toggle_schedule_enabled,
+            commands::settings::get_settings,
+            commands::settings::update_settings,
+            commands::settings::set_launch_at_login,
             greet
         ])
         .run(tauri::generate_context!())

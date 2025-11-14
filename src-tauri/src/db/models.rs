@@ -102,6 +102,60 @@ impl From<SettingRow> for Setting {
     }
 }
 
+impl From<Vec<Setting>> for SettingsSnapshot {
+    fn from(records: Vec<Setting>) -> Self {
+        let mut snapshot = SettingsSnapshot::default();
+        for setting in records {
+            match setting.key.as_str() {
+                "theme" => snapshot.theme = setting.value,
+                "launch_at_login" => {
+                    snapshot.launch_at_login = setting.value == "true"
+                }
+                "minimize_to_tray" => {
+                    snapshot.minimize_to_tray = setting.value == "true"
+                }
+                "show_notifications" => {
+                    snapshot.show_notifications = setting.value == "true"
+                }
+                "notification_sound" => {
+                    snapshot.notification_sound = setting.value == "true"
+                }
+                "default_volume" => {
+                    if let Ok(value) = setting.value.parse::<u8>() {
+                        snapshot.default_volume = value.min(100);
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        snapshot
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SettingsSnapshot {
+    pub theme: String,
+    pub launch_at_login: bool,
+    pub minimize_to_tray: bool,
+    pub show_notifications: bool,
+    pub notification_sound: bool,
+    pub default_volume: u8,
+}
+
+impl Default for SettingsSnapshot {
+    fn default() -> Self {
+        Self {
+            theme: "system".into(),
+            launch_at_login: false,
+            minimize_to_tray: true,
+            show_notifications: true,
+            notification_sound: true,
+            default_volume: 80,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum PlaybackStatus {

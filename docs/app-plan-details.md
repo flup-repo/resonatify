@@ -632,36 +632,23 @@ Based on research of similar applications and cross-platform development best pr
 - 3.1 Data Persistence Layer
 - 3.3 Scheduling Engine
 
-### 3.5 Frontend: Settings UI
+### 3.5 Frontend: Settings UI ✅ COMPLETE (2025-11-14)
 
-**Estimated Duration:** 1 week
-**Complexity:** Medium
-
-**Tasks:**
-1. Create settings store with persistence
-2. Build settings page with sections:
-   - General (theme, launch at login, minimize to tray)
-   - Notifications (show notifications, notification sound)
-   - Audio (default volume)
-   - About (version info, GitHub link)
-   - Support (donation button)
-3. Build reusable settings components
-4. Implement theme switching (light/dark/system)
-5. Implement Tauri commands for settings
+**Summary:**
+- Delivered a full settings experience backed by new Tauri settings commands and a dedicated Zustand store with optimistic updates and persistence.
+- Built a tabbed panel with sections for General, Notifications, Audio, About, and Support, each using shadcn primitives plus reusable toggle/slider components; wired donation and GitHub links via the opener plugin.
+- Added theme switching (light/dark/system) with runtime CSS variable overrides and a `useThemeSync` hook so user preferences immediately update the UI.
 
 **Deliverables:**
-- Complete settings UI
-- Theme switching
-- Launch at login configuration
-- Notification preferences
-- Audio settings
+- ✅ Settings store with ensure/fetch/update actions and launch-at-login plumbing
+- ✅ Settings UI (General/Notifications/Audio/About/Support) with Tailwind/shadcn components & toast-friendly error states
+- ✅ Theme synchronization hook + data-theme overrides for smooth transitions
+- ✅ Backend settings IPC commands persisting to SQLite repository
 
-**Technical Considerations:**
-- Persist settings to database
-- Sync with Tauri backend
-- Respect system theme preferences
-- Implement smooth theme transitions
-- Validate settings before saving
+**Technical Notes:**
+- SettingsSnapshot type aggregates DB rows ensuring default fallbacks when keys are missing.
+- Frontend layout component handles nav + loading/error UI and reuses Radix inputs.
+- Theme override relies on `document.documentElement.dataset.theme` to bypass prefers-color-scheme when users force modes.
 
 **Dependencies:** 3.1 Data Persistence Layer
 
