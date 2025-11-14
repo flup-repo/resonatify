@@ -17,7 +17,7 @@ function App() {
   useThemeSync();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <div className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
           <div>
@@ -46,8 +46,10 @@ function App() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        {activeTab === 'schedules' ? <ScheduleList /> : <SettingsPanel />}
+      <div className="flex grow justify-center px-6 py-10 overflow-hidden">
+        <div className="h-full w-full max-w-5xl overflow-y-auto">
+          {activeTab === 'schedules' ? <ScheduleList /> : <SettingsPanel />}
+        </div>
       </div>
       <ScheduleModal />
     </div>
