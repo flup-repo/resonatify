@@ -386,6 +386,7 @@ git branch -d feature/new-feature
 - Merge `main` into your feature branch regularly to avoid conflicts
 - Delete merged branches promptly
 - Use draft PRs for work-in-progress
+- **Never commit directly to `main`** — all changes must land via a dedicated feature/fix branch and PR.
 
 ---
 

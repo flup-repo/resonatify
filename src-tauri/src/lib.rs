@@ -45,11 +45,13 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             commands::audio::validate_audio_file,
             commands::audio::play_audio_file,
             commands::audio::stop_audio,
             commands::audio::get_audio_status,
+            commands::dialogs::open_audio_file_dialog,
             commands::scheduler::start_scheduler,
             commands::scheduler::stop_scheduler,
             commands::scheduler::reload_scheduler,
@@ -60,6 +62,9 @@ pub fn run() {
             commands::schedules::update_schedule,
             commands::schedules::delete_schedule,
             commands::schedules::toggle_schedule_enabled,
+            commands::settings::get_settings,
+            commands::settings::update_settings,
+            commands::settings::set_launch_at_login,
             greet
         ])
         .run(tauri::generate_context!())

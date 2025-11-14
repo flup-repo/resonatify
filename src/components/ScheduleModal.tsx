@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
@@ -32,19 +33,6 @@ type FormValues = {
   intervalMinutes: number;
   volume: number;
 };
-
-declare global {
-  interface Window {
-    __TAURI__?: {
-      dialog?: {
-        open: (options?: {
-          multiple?: boolean;
-          filters?: Array<{ name: string; extensions: string[] }>;
-        }) => Promise<string | string[] | null>;
-      };
-    };
-  }
-}
 
 const defaultValues: FormValues = {
   name: '',
@@ -127,20 +115,13 @@ export function ScheduleModal() {
   });
 
   const handleFileSelect = async () => {
-    if (typeof window === 'undefined') return;
-    const dialog = window.__TAURI__?.dialog;
-    if (!dialog?.open) {
-      console.warn('Audio file picker requires Tauri dialog support.');
-      return;
-    }
-
-    const selection = await dialog.open({
-      multiple: false,
-      filters: [{ name: 'Audio files', extensions: ['mp3', 'wav', 'flac', 'ogg', 'm4a'] }],
-    });
-
-    if (typeof selection === 'string') {
-      setValue('audioFilePath', selection, { shouldValidate: true });
+    try {
+      const selection = await invoke<string | null>('open_audio_file_dialog');
+      if (selection) {
+        setValue('audioFilePath', selection, { shouldValidate: true });
+      }
+    } catch (error) {
+      console.warn('Audio file picker requires Tauri support.', error);
     }
   };
 
