@@ -1,8 +1,9 @@
 use std::fs;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
+use std::panic::{self, AssertUnwindSafe};
 use std::path::Path;
 
-use rodio::{Decoder, Source};
+use rodio::{decoder::DecoderBuilder, Decoder, Source};
 use serde::Serialize;
 
 use crate::audio::error::AudioValidationError;
@@ -89,9 +90,10 @@ impl AudioValidator {
         }
 
         let file = std::fs::File::open(&canonical_path)?;
+        let metadata = file.metadata()?;
+        let byte_len = metadata.len();
         let reader = BufReader::new(file);
-        let decoder =
-            Decoder::new(reader).map_err(|err| AudioValidationError::Decode(err.to_string()))?;
+        let decoder = Self::build_decoder(reader, Some(extension.as_str()), Some(byte_len))?;
 
         let duration_ms = decoder
             .total_duration()
@@ -115,6 +117,31 @@ impl AudioValidator {
             channels,
             size_bytes,
         })
+    }
+}
+
+impl AudioValidator {
+    fn build_decoder<R>(
+        reader: R,
+        extension_hint: Option<&str>,
+        byte_len: Option<u64>,
+    ) -> Result<Decoder<R>, AudioValidationError>
+    where
+        R: Read + Seek + Send + Sync + 'static,
+    {
+        let mut builder = DecoderBuilder::new().with_data(reader);
+
+        if let Some(len) = byte_len {
+            builder = builder.with_byte_len(len).with_seekable(true);
+        }
+
+        if let Some(hint) = extension_hint {
+            builder = builder.with_hint(hint);
+        }
+
+        panic::catch_unwind(AssertUnwindSafe(|| builder.build()))
+            .map_err(|_| AudioValidationError::Decode("failed to decode audio file".into()))?
+            .map_err(|err| AudioValidationError::Decode(err.to_string()))
     }
 }
 

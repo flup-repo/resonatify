@@ -547,7 +547,7 @@ Based on research of similar applications and cross-platform development best pr
 
 **Summary of Work:**
 - Built a dedicated rodio-backed audio engine with automatic fade-in/out, per-track volume control, and safe device lifecycle management running on a background worker thread.
-- Implemented reusable audio validation covering supported formats (MP3, WAV, FLAC, OGG, M4A/AAC), file size limits, and metadata extraction (duration, channels, sample rate).
+- Implemented reusable audio validation covering supported formats (MP3, WAV, FLAC, OGG, M4A/AAC), file size limits, and metadata extraction (duration, channels, sample rate), now including byte-length and extension hints for Symphonia so container detection stays reliable.
 - Exposed Tauri commands (`validate_audio_file`, `play_audio_file`, `stop_audio`, `get_audio_status`) that return structured playback state for frontend integration.
 - Added comprehensive error types that surface missing devices and validation failures cleanly, plus unit tests for validator and service flows.
 
@@ -565,7 +565,7 @@ Based on research of similar applications and cross-platform development best pr
 - ✅ Unit tests covering validation and service workflows
 
 **Technical Considerations:**
-- Enabled rodio symphonia codecs to support M4A/AAC alongside MP3/WAV/FLAC/OGG.
+- Enabled rodio symphonia codecs and feed decoders with seekable byte-length + extension hints so M4A/AAC alongside MP3/WAV/FLAC/OGG decode consistently.
 - Dedicated audio worker thread keeps non-Send rodio types off async executors while exposing async-friendly commands.
 - Automatic fade-in/out implemented with short-lived worker threads to avoid abrupt transitions.
 - Gracefully handles missing output devices and propagates structured errors to the UI.
