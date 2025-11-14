@@ -749,6 +749,8 @@ Based on research of similar applications and cross-platform development best pr
 **Estimated Duration:** 1-2 weeks
 **Complexity:** Medium
 
+> **Policy Update:** Beginning with this phase (and retroactively enforced), **every code change must include or update unit tests** covering the affected logic. Work items are not considered complete until corresponding tests are merged and passing locally/CI.
+
 ### 5.1 Unit Testing
 
 **Tasks:**
@@ -818,7 +820,7 @@ Based on research of similar applications and cross-platform development best pr
    - macOS 12-15 (Monterey through Sequoia)
    - Intel and Apple Silicon Macs
 
-**Deliverables:**
+-**Deliverables:**
 - Testing checklist completed
 - Bug reports and fixes
 - Performance benchmarks

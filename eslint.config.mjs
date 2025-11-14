@@ -64,4 +64,17 @@ export default tseslint.config(
   {
     ignores: ['dist', 'node_modules', 'target', 'src-tauri', '*.config.js', '*.config.ts'],
   },
+  {
+    files: ['*.cjs'],
+    languageOptions: {
+      globals: {
+        module: 'readonly',
+        require: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+  },
+  {
+    ignores: ['*.cjs'],
+  },
 );

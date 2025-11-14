@@ -264,6 +264,12 @@ pub enum RepeatType {
   - Rust: Use `Result<T, E>` with custom error types
   - TypeScript: Try-catch with user-friendly error messages
 
+### Testing Policy (Mandatory)
+- Every code change **must** ship with corresponding unit tests that exercise the new or modified logic (frontend → Vitest/RTL, backend → Rust tests).
+- Pull requests without adequate test coverage for their changes are not eligible for review; document explicit rationale only when a test is impossible.
+- When touching existing functionality, update or extend existing tests to reflect the behavior change and keep coverage for critical paths above the agreed thresholds.
+- CI and local workflows should run lint + unit tests before requesting review to enforce the policy consistently.
+
 ### Git Commit Messages
 - Use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
 - Examples:
