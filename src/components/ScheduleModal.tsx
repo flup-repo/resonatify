@@ -137,13 +137,13 @@ export function ScheduleModal() {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={closeModal}>
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
+      <DialogContent className="max-h-[85vh] max-w-2xl">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{modalMode === 'edit' ? 'Edit schedule' : 'Create schedule'}</DialogTitle>
           <DialogDescription>Configure when and how the audio reminder should run.</DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-6" onSubmit={onSubmit}>
+        <form className="flex min-h-0 grow flex-col space-y-6 overflow-y-auto pr-2" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" placeholder="Morning meditation" {...register('name', { required: true })} />
