@@ -1,5 +1,6 @@
 // Base UI Components
 export { Button, buttonVariants } from './button';
+export type { ButtonProps } from './button';
 export { Input } from './input';
 export { Label } from './label';
 export { Switch } from './switch';

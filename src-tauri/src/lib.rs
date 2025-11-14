@@ -55,6 +55,11 @@ pub fn run() {
             commands::scheduler::reload_scheduler,
             commands::scheduler::get_scheduler_status,
             commands::scheduler::get_upcoming_executions,
+            commands::schedules::get_all_schedules,
+            commands::schedules::create_schedule,
+            commands::schedules::update_schedule,
+            commands::schedules::delete_schedule,
+            commands::schedules::toggle_schedule_enabled,
             greet
         ])
         .run(tauri::generate_context!())

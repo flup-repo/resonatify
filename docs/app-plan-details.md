@@ -604,41 +604,29 @@ Based on research of similar applications and cross-platform development best pr
 
 **Dependencies:** 3.1 Data Persistence Layer, 3.2 Audio Playback System
 
-### 3.4 Frontend: Schedule Management UI
+### 3.4 Frontend: Schedule Management UI ✅ COMPLETE (2025-11-14)
 
 **Estimated Duration:** 2 weeks
 **Complexity:** Medium-High
 
-**Tasks:**
-1. Create state management store (Zustand)
-2. Create type definitions
-3. Build main schedule list component
-4. Build schedule card component
-5. Build add/edit schedule modal with:
-   - Audio file selection
-   - Time picker
-   - Repeat configuration
-   - Weekday selector for custom repeats
-   - Volume control
-6. Build header with actions
-7. Implement Tauri commands (CRUD operations)
+**Summary:**
+- Built full schedule management experience in React with Tailwind/shadcn components, Zustand store, and Tauri IPC plumbing aligned with backend repositories.
+- Implemented CRUD flows wired to new Rust commands plus optimistic toggles, loading/empty/error states, and Cmd+N shortcut for quick creation.
+- Add/Edit modal now supports audio file picker, time selector, repeat patterns (including weekly/custom intervals), weekday chips, and volume slider with validation.
 
 **Deliverables:**
-- Complete schedule management UI
-- Add/edit/delete functionality
-- Audio file selection
-- Repeat configuration
-- Volume control
-- Responsive design
+- ✅ Zustand schedule store with modal state, optimistic actions, and backend serialization helpers
+- ✅ Schedule types/utilities mirroring backend repeat structures
+- ✅ Schedule list, header, and card components with enable toggle, edit/delete, and responsive layout
+- ✅ Schedule modal with audio selection, time picker, repeat config, weekday selector, volume control, and keyboard shortcut integration
+- ✅ Rust schedule commands (get/create/update/delete/toggle) invoking repositories and reloading scheduler
 
-**Technical Considerations:**
-- Use optimistic updates for better UX
-- Implement proper error handling and user feedback
-- Add loading states for async operations
-- Validate audio file selection
-- Show helpful error messages
-- Implement keyboard shortcuts (Cmd+N for new schedule)
-- Add confirmation dialogs for destructive actions
+**Technical Notes:**
+- Error states surfaced inline with retry affordances; store tracks loading/errors.
+- Repeat serialization normalizes snake_case interval_minutes and weekday indices.
+- Keyboard shortcut (⌘/Ctrl+N) opens modal globally.
+- Scheduler reload triggered after each mutating IPC command to keep engine in sync.
+- Confirmation dialog for delete remains planned for later UX iteration.
 
 **Dependencies:**
 - 3.1 Data Persistence Layer
