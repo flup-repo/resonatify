@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::BufReader;
-use std::path::PathBuf;
+use std::panic::{self, AssertUnwindSafe};
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
@@ -54,9 +55,7 @@ impl AudioPlayer {
         self.stop_immediate();
 
         let sink = Arc::new(Sink::try_new(&self.handle).map_err(AudioError::Sink)?);
-        let file = File::open(&path)?;
-        let reader = BufReader::new(file);
-        let decoder = Decoder::new(reader).map_err(|err| AudioError::Decoder(err.to_string()))?;
+        let decoder = Self::create_decoder(&path)?;
 
         sink.set_volume(0.0);
         sink.append(decoder);
@@ -148,5 +147,16 @@ impl AudioPlayer {
         });
 
         self.fade_task = Some(task);
+    }
+}
+
+impl AudioPlayer {
+    fn create_decoder(path: &Path) -> Result<Decoder<BufReader<File>>, AudioError> {
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+
+        panic::catch_unwind(AssertUnwindSafe(|| Decoder::new(reader)))
+            .map_err(|_| AudioError::Decoder("failed to decode audio file".into()))?
+            .map_err(|err| AudioError::Decoder(err.to_string()))
     }
 }
