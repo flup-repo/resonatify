@@ -38,6 +38,7 @@ pub struct Schedule {
     pub volume: u8,
     pub created_at: String,
     pub updated_at: String,
+    pub last_run_at: Option<String>,
 }
 
 #[derive(Debug, Clone, FromRow)]
@@ -52,6 +53,7 @@ pub struct ScheduleRow {
     pub volume: i64,
     pub created_at: String,
     pub updated_at: String,
+    pub last_run_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -62,6 +64,7 @@ pub struct CreateScheduleInput {
     pub enabled: bool,
     pub repeat_type: RepeatType,
     pub volume: u8,
+    pub last_run_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -72,6 +75,7 @@ pub struct UpdateScheduleInput {
     pub enabled: Option<bool>,
     pub repeat_type: Option<RepeatType>,
     pub volume: Option<u8>,
+    pub last_run_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -146,6 +150,7 @@ impl TryFrom<ScheduleRow> for Schedule {
             volume: row.volume as u8,
             created_at: row.created_at,
             updated_at: row.updated_at,
+            last_run_at: row.last_run_at,
         })
     }
 }

@@ -15,6 +15,10 @@ export function ScheduleList() {
     openEditModal,
     deleteSchedule,
     toggleSchedule,
+    playTest,
+    stopTest,
+    isTesting,
+    isTestLoading,
   } = useScheduleStore();
 
   useEffect(() => {
@@ -58,6 +62,10 @@ export function ScheduleList() {
             onToggle={toggleSchedule}
             onEdit={openEditModal}
             onDelete={deleteSchedule}
+            onTest={playTest}
+            onStopTest={stopTest}
+            isTesting={isTesting(schedule.id)}
+            isTestLoading={isTestLoading}
           />
         ))}
       </div>

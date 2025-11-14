@@ -14,6 +14,8 @@ interface ScheduleStoreState {
   modalMode: ModalMode;
   editingSchedule?: Schedule;
   error?: string;
+  testScheduleId?: string;
+  isTestLoading: boolean;
 }
 
 interface ScheduleStoreActions {
@@ -25,6 +27,9 @@ interface ScheduleStoreActions {
   updateSchedule: (id: string, input: UpdateScheduleInput) => Promise<void>;
   deleteSchedule: (id: string) => Promise<void>;
   toggleSchedule: (id: string, enabled: boolean) => Promise<void>;
+  playTest: (schedule: Schedule) => Promise<void>;
+  stopTest: () => Promise<void>;
+  isTesting: (id: string) => boolean;
 }
 
 const mapSchedule = (payload: any): Schedule => ({
@@ -45,6 +50,8 @@ export const useScheduleStore = create<ScheduleStoreState & ScheduleStoreActions
     isLoading: false,
     isModalOpen: false,
     modalMode: 'create',
+    testScheduleId: undefined,
+    isTestLoading: false,
 
     fetchSchedules: async () => {
       try {
@@ -143,5 +150,38 @@ export const useScheduleStore = create<ScheduleStoreState & ScheduleStoreActions
         set({ error: 'Failed to toggle schedule', schedules: previous });
       }
     },
+
+    playTest: async (schedule) => {
+      const { stopTest, testScheduleId } = get();
+      if (testScheduleId && testScheduleId !== schedule.id) {
+        await stopTest();
+      }
+
+      try {
+        set({ isTestLoading: true, testScheduleId: schedule.id, error: undefined });
+        await invoke('play_audio_file', {
+          path: schedule.audioFilePath,
+          volume: schedule.volume,
+        });
+        set({ isTestLoading: false });
+      } catch (error) {
+        console.error('Failed to play audio test', error);
+        set({ error: 'Failed to play audio test', isTestLoading: false, testScheduleId: undefined });
+      }
+    },
+
+    stopTest: async () => {
+      try {
+        set({ isTestLoading: true });
+        await invoke('stop_audio');
+      } catch (error) {
+        console.error('Failed to stop audio test', error);
+        set({ error: 'Failed to stop audio test' });
+      } finally {
+        set({ isTestLoading: false, testScheduleId: undefined });
+      }
+    },
+
+    isTesting: (id) => get().testScheduleId === id,
   })),
 );

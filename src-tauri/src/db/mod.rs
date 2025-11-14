@@ -143,6 +143,7 @@ mod tests {
                 enabled: true,
                 repeat_type: RepeatType::Daily,
                 volume: 80,
+                last_run_at: None,
             })
             .await
             .unwrap();
@@ -194,6 +195,7 @@ mod tests {
                 enabled: true,
                 repeat_type: RepeatType::Once,
                 volume: 100,
+                last_run_at: None,
             })
             .await
             .unwrap();
