@@ -5,12 +5,6 @@ use tauri::{
     AppHandle, Manager, Runtime, WebviewWindow,
 };
 
-/// Tray icon states
-pub enum TrayIconState {
-    Idle,
-    Active,
-}
-
 /// Build and configure the system tray
 pub fn create_tray<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     // Create menu items
@@ -116,16 +110,4 @@ pub async fn start_tray_tooltip_updater<R: Runtime>(
     // TODO: Implement dynamic tooltip updates
     // This requires storing a reference to the tray icon or using Tauri's event system
     // For now, the tooltip is set once during tray creation
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_tray_icon_states() {
-        // Test that TrayIconState enum variants exist
-        let _idle = TrayIconState::Idle;
-        let _active = TrayIconState::Active;
-    }
 }
