@@ -137,17 +137,19 @@ export function ScheduleModal() {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={closeModal}>
-      <DialogContent className="max-h-[90vh] max-w-2xl gap-6">
-        <DialogHeader className="shrink-0">
-          <DialogTitle className="text-2xl">
-            {modalMode === 'edit' ? 'Edit schedule' : 'Create schedule'}
-          </DialogTitle>
-          <DialogDescription className="text-base">
-            Configure when and how the audio reminder should run.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-h-[90vh] max-w-2xl p-0">
+        <div className="flex max-h-[90vh] flex-col">
+          <DialogHeader className="shrink-0 px-6 pt-6 pb-4">
+            <DialogTitle className="text-2xl">
+              {modalMode === 'edit' ? 'Edit schedule' : 'Create schedule'}
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              Configure when and how the audio reminder should run.
+            </DialogDescription>
+          </DialogHeader>
 
-        <form className="flex min-h-0 grow flex-col space-y-5 overflow-y-auto pr-1" onSubmit={onSubmit}>
+          <form className="flex min-h-0 flex-col" onSubmit={onSubmit}>
+            <div className="flex-1 space-y-5 overflow-y-auto px-6 pb-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" placeholder="Morning meditation" {...register('name', { required: true })} />
@@ -238,14 +240,16 @@ export function ScheduleModal() {
             <Label htmlFor="volume">Volume ({watch('volume')}%)</Label>
             <Input id="volume" type="range" min={0} max={100} {...register('volume', { valueAsNumber: true })} />
           </div>
+            </div>
 
-          <DialogFooter>
-            <Button type="button" variant="ghost" onClick={closeModal}>
-              Cancel
-            </Button>
-            <Button type="submit">{modalMode === 'edit' ? 'Save changes' : 'Create'}</Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="shrink-0 border-t bg-muted/30 px-6 py-4">
+              <Button type="button" variant="ghost" onClick={closeModal}>
+                Cancel
+              </Button>
+              <Button type="submit">{modalMode === 'edit' ? 'Save changes' : 'Create'}</Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
