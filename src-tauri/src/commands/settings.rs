@@ -1,5 +1,6 @@
 use serde::Deserialize;
-use tauri::State;
+use tauri::{AppHandle, State};
+use tauri_plugin_autostart::ManagerExt;
 
 use crate::db::models::{Setting, SettingsSnapshot};
 use crate::db::Database;
@@ -79,9 +80,30 @@ pub async fn update_settings(
 }
 
 #[tauri::command]
-pub async fn set_launch_at_login(enabled: bool, state: State<'_, AppState>) -> Result<(), String> {
+pub async fn set_launch_at_login(
+    enabled: bool,
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<(), String> {
+    // Get the autostart manager
+    let autostart_manager = app.autolaunch();
+
+    // Enable or disable autostart
+    if enabled {
+        autostart_manager
+            .enable()
+            .map_err(|err| format!("Failed to enable launch at login: {}", err))?;
+    } else {
+        autostart_manager
+            .disable()
+            .map_err(|err| format!("Failed to disable launch at login: {}", err))?;
+    }
+
+    // Save setting to database
     let repo = database(&state).settings_repository();
     repo.upsert("launch_at_login", &enabled.to_string())
         .await
-        .map_err(|err| err.to_string())
+        .map_err(|err| err.to_string())?;
+
+    Ok(())
 }
