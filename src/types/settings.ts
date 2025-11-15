@@ -30,7 +30,7 @@ export interface BackendSettingsPayload {
 }
 
 export const defaultSettings: Settings = {
-  theme: 'system',
+  theme: 'dark',
   launchAtLogin: false,
   minimizeToTray: true,
   showNotifications: true,
@@ -40,7 +40,7 @@ export const defaultSettings: Settings = {
 
 export function mapFromBackend(payload: BackendSettingsResponse): Settings {
   return {
-    theme: isThemePreference(payload.theme) ? payload.theme : 'system',
+    theme: isThemePreference(payload.theme) ? payload.theme : 'dark',
     launchAtLogin: payload.launch_at_login,
     minimizeToTray: payload.minimize_to_tray,
     showNotifications: payload.show_notifications,

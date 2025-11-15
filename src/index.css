@@ -4,37 +4,63 @@
    Design System - Resonatify
    ========================================================================== */
 
-@theme {
-  /* Color Palette - Light Mode */
-  --color-background: 255 255 255;
-  --color-foreground: 13 13 13;
-  --color-card: 255 255 255;
-  --color-card-foreground: 13 13 13;
-  --color-popover: 255 255 255;
-  --color-popover-foreground: 13 13 13;
+/* Define color CSS variables first - Dark by default */
+:root {
+  --color-background: 26 29 46;          /* #1a1d2e - Dark background */
+  --color-foreground: 255 255 255;       /* #ffffff - White text */
+  --color-card: 37 40 54;                /* #252836 - Card/Surface */
+  --color-card-foreground: 255 255 255;
+  --color-popover: 37 40 54;             /* #252836 */
+  --color-popover-foreground: 255 255 255;
 
-  --color-primary: 99 102 241;        /* Indigo-500 */
+  --color-primary: 76 154 255;           /* #4c9aff - OnyX Blue */
   --color-primary-foreground: 255 255 255;
 
-  --color-secondary: 244 244 245;     /* Zinc-100 */
-  --color-secondary-foreground: 24 24 27;
+  --color-secondary: 37 40 54;           /* #252836 - Card surface */
+  --color-secondary-foreground: 255 255 255;
 
-  --color-muted: 244 244 245;         /* Zinc-100 */
-  --color-muted-foreground: 113 113 122;
+  --color-muted: 37 40 54;               /* #252836 */
+  --color-muted-foreground: 139 146 171; /* #8b92ab - Text Secondary */
 
-  --color-accent: 244 244 245;        /* Zinc-100 */
-  --color-accent-foreground: 24 24 27;
+  --color-accent: 76 154 255;            /* #4c9aff - OnyX Blue */
+  --color-accent-foreground: 255 255 255;
 
-  --color-destructive: 239 68 68;     /* Red-500 */
+  --color-destructive: 255 107 107;      /* #ff6b6b - Error */
   --color-destructive-foreground: 255 255 255;
 
-  --color-border: 228 228 231;        /* Zinc-200 */
-  --color-input: 228 228 231;         /* Zinc-200 */
-  --color-ring: 99 102 241;           /* Indigo-500 */
+  --color-border: 45 49 66;              /* #2d3142 - Border */
+  --color-input: 45 49 66;               /* #2d3142 */
+  --color-ring: 76 154 255;              /* #4c9aff - OnyX Blue */
 
-  --color-success: 34 197 94;         /* Green-500 */
-  --color-warning: 251 146 60;        /* Orange-400 */
-  --color-info: 59 130 246;           /* Blue-500 */
+  --color-success: 0 212 170;            /* #00d4aa - Success */
+  --color-warning: 255 184 77;           /* #ffb84d - Warning */
+  --color-info: 76 154 255;              /* #4c9aff */
+}
+
+/* Tailwind theme registration - references the CSS variables above */
+@theme {
+  --color-background: rgb(var(--color-background));
+  --color-foreground: rgb(var(--color-foreground));
+  --color-card: rgb(var(--color-card));
+  --color-card-foreground: rgb(var(--color-card-foreground));
+  --color-popover: rgb(var(--color-popover));
+  --color-popover-foreground: rgb(var(--color-popover-foreground));
+  --color-primary: rgb(var(--color-primary));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-secondary: rgb(var(--color-secondary));
+  --color-secondary-foreground: rgb(var(--color-secondary-foreground));
+  --color-muted: rgb(var(--color-muted));
+  --color-muted-foreground: rgb(var(--color-muted-foreground));
+  --color-accent: rgb(var(--color-accent));
+  --color-accent-foreground: rgb(var(--color-accent-foreground));
+  --color-destructive: rgb(var(--color-destructive));
+  --color-destructive-foreground: rgb(var(--color-destructive-foreground));
+  --color-border: rgb(var(--color-border));
+  --color-input: rgb(var(--color-input));
+  --color-ring: rgb(var(--color-ring));
+  --color-success: rgb(var(--color-success));
+  --color-warning: rgb(var(--color-warning));
+  --color-info: rgb(var(--color-info));
 
   /* Border Radius */
   --radius-sm: 0.25rem;    /* 4px */
@@ -48,38 +74,71 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
-/* Dark Mode Color Overrides */
-@media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: 9 9 11;          /* Zinc-950 */
-    --color-foreground: 250 250 250;
-    --color-card: 9 9 11;
-    --color-card-foreground: 250 250 250;
-    --color-popover: 9 9 11;
-    --color-popover-foreground: 250 250 250;
+/* Light Theme Override */
+html[data-theme="light"] {
+  --color-background: 245 247 250;       /* #f5f7fa */
+  --color-foreground: 26 29 46;          /* #1a1d2e */
+  --color-card: 255 255 255;             /* #ffffff */
+  --color-card-foreground: 26 29 46;     /* #1a1d2e */
+  --color-popover: 255 255 255;          /* #ffffff */
+  --color-popover-foreground: 26 29 46;  /* #1a1d2e */
 
-    --color-primary: 129 140 248;        /* Indigo-400 */
+  --color-primary: 76 154 255;           /* #4c9aff - OnyX Blue */
+  --color-primary-foreground: 255 255 255;
+
+  --color-secondary: 245 247 250;        /* #f5f7fa */
+  --color-secondary-foreground: 26 29 46;
+
+  --color-muted: 245 247 250;            /* #f5f7fa */
+  --color-muted-foreground: 107 114 128; /* #6b7280 */
+
+  --color-accent: 76 154 255;            /* #4c9aff */
+  --color-accent-foreground: 255 255 255;
+
+  --color-destructive: 255 107 107;      /* #ff6b6b */
+  --color-destructive-foreground: 255 255 255;
+
+  --color-border: 225 229 235;           /* #e1e5eb */
+  --color-input: 225 229 235;            /* #e1e5eb */
+  --color-ring: 76 154 255;              /* #4c9aff */
+
+  --color-success: 0 212 170;            /* #00d4aa */
+  --color-warning: 255 184 77;           /* #ffb84d */
+  --color-info: 76 154 255;              /* #4c9aff */
+}
+
+/* System preference support */
+@media (prefers-color-scheme: dark) {
+  html[data-theme="system"] {
+    --color-background: 26 29 46;
+    --color-foreground: 255 255 255;
+    --color-card: 37 40 54;
+    --color-card-foreground: 255 255 255;
+    --color-popover: 37 40 54;
+    --color-popover-foreground: 255 255 255;
+
+    --color-primary: 76 154 255;
     --color-primary-foreground: 255 255 255;
 
-    --color-secondary: 39 39 42;         /* Zinc-800 */
-    --color-secondary-foreground: 250 250 250;
+    --color-secondary: 37 40 54;
+    --color-secondary-foreground: 255 255 255;
 
-    --color-muted: 39 39 42;             /* Zinc-800 */
-    --color-muted-foreground: 161 161 170;
+    --color-muted: 37 40 54;
+    --color-muted-foreground: 139 146 171;
 
-    --color-accent: 39 39 42;            /* Zinc-800 */
-    --color-accent-foreground: 250 250 250;
+    --color-accent: 76 154 255;
+    --color-accent-foreground: 255 255 255;
 
-    --color-destructive: 248 113 113;    /* Red-400 */
+    --color-destructive: 255 107 107;
     --color-destructive-foreground: 255 255 255;
 
-    --color-border: 39 39 42;            /* Zinc-800 */
-    --color-input: 39 39 42;             /* Zinc-800 */
-    --color-ring: 129 140 248;           /* Indigo-400 */
+    --color-border: 45 49 66;
+    --color-input: 45 49 66;
+    --color-ring: 76 154 255;
 
-    --color-success: 74 222 128;         /* Green-400 */
-    --color-warning: 251 146 60;         /* Orange-400 */
-    --color-info: 96 165 250;           /* Blue-400 */
+    --color-success: 0 212 170;
+    --color-warning: 255 184 77;
+    --color-info: 76 154 255;
   }
 }
 
