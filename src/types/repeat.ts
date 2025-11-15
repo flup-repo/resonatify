@@ -52,7 +52,7 @@ export function formatRepeatType(repeat: RepeatType): string {
     case 'custom':
       return `Every ${repeat.intervalMinutes}m`;
     case 'weekly':
-      return repeat.days.length
+      return repeat.days && repeat.days.length
         ? repeat.days.map((d) => WEEKDAY_LABELS[d]).join(', ')
         : 'Weekly';
     default:
@@ -65,7 +65,7 @@ export function toBackendRepeatType(repeat: RepeatType): BackendRepeatType {
     case 'custom':
       return { type: 'custom', interval_minutes: repeat.intervalMinutes };
     case 'weekly':
-      return { type: 'weekly', days: repeat.days.map((index) => WEEKDAY_VALUES[index] ?? 'Sun') };
+      return { type: 'weekly', days: (repeat.days ?? []).map((index) => WEEKDAY_VALUES[index] ?? 'Sun') };
     default:
       return repeat;
   }

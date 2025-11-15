@@ -126,8 +126,10 @@ export function ScheduleModal() {
   };
 
   const repeatHint = (() => {
-    if (repeatType === 'weekly' && weeklyDays.length) {
-      return `Runs on ${formatRepeatType({ type: 'weekly', days: weeklyDays })}`;
+    if (repeatType === 'weekly') {
+      return weeklyDays.length
+        ? `Runs on ${formatRepeatType({ type: 'weekly', days: weeklyDays })}`
+        : 'Select days of the week';
     }
     if (repeatType === 'custom') {
       return `Repeats every ${watch('intervalMinutes')} minutes`;
