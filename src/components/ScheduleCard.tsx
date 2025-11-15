@@ -1,4 +1,4 @@
-import { Edit3, Play, StopCircle, Trash2 } from 'lucide-react';
+import { Edit3, Play, StopCircle, Trash2, Music } from 'lucide-react';
 
 import { Button, Switch } from '@/components/ui';
 import { formatRepeatType } from '@/types/repeat';
@@ -33,48 +33,30 @@ export function ScheduleCard({
   return (
     <article
       className={cn(
-        'group relative rounded-xl border border-border/60 bg-card p-5 shadow-sm transition-all duration-200 hover:border-border hover:shadow-md',
+        'group relative flex min-h-[80px] items-start gap-4 rounded-xl border border-border bg-card px-8 py-6 shadow-sm transition-all duration-200 hover:border-primary/30 hover:shadow-md',
         isTesting && 'ring-2 ring-primary/50',
         !schedule.enabled && 'opacity-60',
       )}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h3 className="mb-1 truncate text-lg font-semibold leading-tight">{schedule.name}</h3>
-          <p className="text-sm text-muted-foreground">{repeatLabel}</p>
-        </div>
-        <Switch
-          checked={schedule.enabled}
-          onCheckedChange={(checked) => onToggle(schedule.id, checked)}
-          aria-label="Toggle schedule"
-          className="shrink-0"
-        />
+      {/* Icon */}
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Music className="h-5 w-5" />
       </div>
 
-      {/* Time Display */}
-      <div className="mt-5 flex items-baseline gap-4">
-        <span className="text-3xl font-bold tracking-tight text-foreground">{timeLabel}</span>
-        <span className="text-sm text-muted-foreground">
-          <span className="font-medium">Vol:</span> {schedule.volume}%
-        </span>
+      {/* Content */}
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <h3 className="truncate text-base font-semibold leading-tight">{schedule.name}</h3>
+        <p className="text-sm text-muted-foreground">
+          {repeatLabel} at {timeLabel} • Volume {schedule.volume}%
+        </p>
       </div>
 
-      {/* Actions */}
-      <div className="mt-6 flex items-center gap-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          className="gap-1.5 transition-all"
-          onClick={() => onEdit(schedule)}
-        >
-          <Edit3 className="h-3.5 w-3.5" />
-          <span>Edit</span>
-        </Button>
+      {/* Actions - Right aligned */}
+      <div className="flex shrink-0 items-center gap-3">
         <Button
           variant={isTesting ? 'destructive' : 'outline'}
           size="sm"
-          className="gap-1.5 transition-all"
+          className="gap-1.5"
           onClick={() => (isTesting ? onStopTest() : onTest(schedule))}
           disabled={isTestLoading && !isTesting}
         >
@@ -91,14 +73,29 @@ export function ScheduleCard({
           )}
         </Button>
         <Button
+          variant="secondary"
+          size="sm"
+          className="gap-1.5"
+          onClick={() => onEdit(schedule)}
+        >
+          <Edit3 className="h-3.5 w-3.5" />
+          <span>Edit</span>
+        </Button>
+        <Button
           variant="ghost"
           size="sm"
-          className="ml-auto gap-1.5 text-muted-foreground transition-all hover:text-destructive"
+          className="gap-1.5 text-muted-foreground hover:text-destructive"
           onClick={() => onDelete(schedule.id)}
         >
           <Trash2 className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Delete</span>
         </Button>
+        <Switch
+          checked={schedule.enabled}
+          onCheckedChange={(checked) => onToggle(schedule.id, checked)}
+          aria-label="Toggle schedule"
+          className="shrink-0"
+        />
       </div>
 
       {/* Testing Indicator */}

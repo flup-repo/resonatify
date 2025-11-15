@@ -376,11 +376,15 @@ Slide: 200ms cubic-bezier(0.4, 0, 0.2, 1)
 
 ## Implementation Priority
 
-### Phase 1: Core Layout (High Priority)
-1. ✅ Dark theme colors in CSS variables
-2. ✅ Update main app layout (centered content, compact header)
-3. ✅ Redesign schedule cards as rows
-4. ✅ Right-align all actions
+### Phase 1: Core Layout (High Priority) ✅ COMPLETED (2025-11-15)
+1. ✅ Dark theme colors in CSS variables (src/index.css)
+2. ✅ Update main app layout (centered content, compact header) (src/App.tsx)
+3. ✅ Redesign schedule cards as rows (src/components/ScheduleCard.tsx)
+4. ✅ Right-align all actions (src/components/ScheduleCard.tsx)
+5. ✅ Install and configure @tailwindcss/vite plugin (vite.config.ts, package.json)
+6. ✅ Set dark theme as default (src/types/settings.ts)
+7. ✅ Implement theme sync with settings (src/App.tsx, src/hooks/useThemeSync.ts)
+8. ✅ Change schedule list from grid to vertical stack (src/components/ScheduleList.tsx)
 
 ### Phase 2: Settings Redesign
 1. ✅ Row-based settings layout
