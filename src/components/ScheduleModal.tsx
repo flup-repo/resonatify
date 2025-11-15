@@ -138,8 +138,8 @@ export function ScheduleModal() {
   return (
     <Dialog open={isModalOpen} onOpenChange={closeModal}>
       <DialogContent className="max-h-[90vh] max-w-2xl p-0">
-        <div className="flex max-h-[90vh] flex-col">
-          <DialogHeader className="shrink-0 px-6 pt-6 pb-4">
+        <div className="flex max-h-[90vh] flex-col bg-card">
+          <DialogHeader className="shrink-0 bg-card px-6 pt-6 pb-4">
             <DialogTitle className="text-2xl">
               {modalMode === 'edit' ? 'Edit schedule' : 'Create schedule'}
             </DialogTitle>
@@ -148,8 +148,8 @@ export function ScheduleModal() {
             </DialogDescription>
           </DialogHeader>
 
-          <form className="flex min-h-0 flex-col" onSubmit={onSubmit}>
-            <div className="flex-1 space-y-5 overflow-y-auto px-6 pb-4">
+          <form className="flex min-h-0 flex-col bg-card" onSubmit={onSubmit}>
+            <div className="flex-1 space-y-5 overflow-y-auto bg-card px-6 pb-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" placeholder="Morning meditation" {...register('name', { required: true })} />
@@ -242,7 +242,7 @@ export function ScheduleModal() {
           </div>
             </div>
 
-            <DialogFooter className="shrink-0 border-t bg-muted/30 px-6 py-4">
+            <DialogFooter className="shrink-0 border-t bg-card px-6 py-4">
               <Button type="button" variant="ghost" onClick={closeModal}>
                 Cancel
               </Button>
