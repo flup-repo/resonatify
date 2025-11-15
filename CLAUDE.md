@@ -7,185 +7,167 @@
 
 ## Project Overview
 
-**Resonatify** is a cross-platform desktop application that allows users to schedule audio files to play at specific times. It functions as a background process similar to a cron job execution engine.
+**Resonatify** is a cross-platform desktop application for scheduling audio files to play at specific times. Built with Tauri 2.0, React, and Rust.
 
-- **Primary Platform**: macOS (initial release)
-- **Future Platforms**: Windows, Linux
-- **Development Status**: Planning/Initial Development Phase
-- **Target Users**: Individuals needing audio reminders (meditation, breaks, alarms)
+- **Status**: MVP in active development
+- **Platform**: macOS (with cross-platform foundation)
+- **Target**: Users needing audio-based reminders and alarms
 
-### Core Features
-- Schedule audio files to play at specific times
-- Multiple repeat patterns (once, daily, weekdays, weekends, custom)
-- Background execution with system tray integration
-- Simple, intuitive user interface
-- Settings persistence and personalization
-- macOS native integration (notifications, launch at login)
-
-### Future Features (Post-MVP)
-- Expanded actions (open apps, display messages, run scripts)
-- In-app audio recording
-- AI integration (API-driven tasks)
-- Windows and Linux support
+### Implemented Features
+- ✅ Schedule CRUD operations (create, read, update, delete)
+- ✅ Multiple repeat patterns (Once, Daily, Weekdays, Weekends, Weekly with custom days)
+- ✅ Background scheduler engine with tokio
+- ✅ Audio playback service (rodio)
+- ✅ SQLite database with migrations
+- ✅ System tray integration
+- ✅ Theme system (light/dark/system)
+- ✅ Settings persistence
+- ✅ File dialog for audio selection
 
 ---
 
 ## Technology Stack
 
 ### Frontend
-- **Framework**: React 18+ with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Component Library**: shadcn/ui
-- **State Management**: Zustand
+- **Framework**: React 19 + TypeScript 5.8
+- **Build**: Vite 7 + Tailwind CSS 4
+- **UI**: shadcn/ui (Radix primitives)
+- **State**: Zustand 5
 - **Forms**: react-hook-form
-- **Date/Time**: date-fns
 - **Testing**: Vitest + React Testing Library
 
-### Backend (Rust via Tauri)
-- **Framework**: Tauri 2.0
-- **Runtime**: tokio (async)
-- **Database**: SQLite with sqlx/rusqlite
-- **Audio Playback**: rodio
+### Backend
+- **Framework**: Tauri 2.0 (Rust)
+- **Async**: tokio
+- **Database**: SQLite (sqlx)
+- **Audio**: rodio
 - **Date/Time**: chrono
-- **Serialization**: serde
-- **Plugins**:
-  - tauri-plugin-autostart (launch at login)
-  - tauri-plugin-notification (system notifications)
-  - tauri-plugin-updater (auto-updates)
-
-### Development Tools
-- **Language**: Rust (backend), TypeScript (frontend)
-- **Package Manager**: npm (frontend), cargo (backend)
-- **Version Control**: Git
-- **CI/CD**: GitHub Actions
-- **Testing**: Rust built-in testing + Vitest + Playwright
+- **Plugins**: tauri-plugin-opener, tauri-plugin-dialog
 
 ---
 
 ## Project Structure
 
 ```
-resonatify/
-├── docs/
-│   ├── plan-new-app.md           # Original requirements
-│   └── app-plan-details.md       # Comprehensive development plan
-├── src/                          # React frontend
-│   ├── components/               # React components
-│   │   ├── ScheduleCard.tsx     # Individual schedule display
-│   │   ├── ScheduleList.tsx     # Main schedule list
-│   │   ├── ScheduleModal.tsx    # Add/edit modal
-│   │   ├── Header.tsx           # App header
-│   │   └── settings/            # Settings components
-│   ├── stores/                  # Zustand state stores
-│   │   ├── scheduleStore.ts     # Schedule state management
-│   │   └── settingsStore.ts     # Settings state management
-│   ├── types/                   # TypeScript type definitions
-│   │   └── schedule.ts          # Schedule-related types
-│   ├── utils/                   # Utility functions
-│   ├── hooks/                   # Custom React hooks
-│   ├── App.tsx                  # Main app component
-│   └── main.tsx                 # Entry point
-├── src-tauri/                   # Rust backend
-│   ├── src/
-│   │   ├── main.rs              # Tauri app entry point
-│   │   ├── audio/               # Audio playback module
-│   │   │   ├── player.rs        # Audio player implementation
-│   │   │   └── validator.rs    # Audio file validation
-│   │   ├── scheduler/           # Scheduling engine
-│   │   │   ├── engine.rs        # Main scheduler engine
-│   │   │   ├── time_calculator.rs  # Time calculation logic
-│   │   │   └── models.rs        # Schedule models
-│   │   ├── db/                  # Database layer
-│   │   │   ├── mod.rs           # Database initialization
-│   │   │   ├── schedules.rs     # Schedule repository
-│   │   │   └── settings.rs      # Settings repository
-│   │   ├── commands/            # Tauri commands (IPC)
-│   │   │   ├── schedules.rs     # Schedule CRUD commands
-│   │   │   ├── settings.rs      # Settings commands
-│   │   │   └── audio.rs         # Audio commands
-│   │   └── tray.rs              # System tray implementation
-│   ├── migrations/              # Database migrations
-│   ├── Cargo.toml               # Rust dependencies
-│   └── tauri.conf.json          # Tauri configuration
-├── tests/                       # Integration and E2E tests
-├── CLAUDE.md                    # This file
-└── package.json                 # Node dependencies
+src/                              # React frontend
+├── components/
+│   ├── ScheduleCard.tsx         # Schedule display card
+│   ├── ScheduleList.tsx         # Schedule list with empty state
+│   ├── ScheduleModal.tsx        # Add/edit schedule dialog
+│   ├── ScheduleHeader.tsx       # App header with actions
+│   ├── settings/                # Settings UI
+│   │   ├── SettingsLayout.tsx   # Settings panel with sidebar
+│   │   ├── SettingsPanel.tsx    # Settings sections
+│   │   └── ThemeIndicator.tsx   # Visual theme indicator
+│   └── ui/                      # shadcn/ui components
+├── stores/
+│   ├── scheduleStore.ts         # Schedule state + Tauri commands
+│   └── settingsStore.ts         # Settings state with persistence
+├── types/
+│   ├── schedule.ts              # Schedule types + mappers
+│   ├── repeat.ts                # Repeat type definitions
+│   └── settings.ts              # Settings types
+├── hooks/
+│   ├── useScheduleShortcuts.ts  # Keyboard shortcuts (Cmd+N, etc)
+│   └── useThemeSync.ts          # Theme system sync
+├── utils/
+│   ├── cn.ts                    # Tailwind class merge
+│   └── openLink.ts              # External link handler
+└── App.tsx                      # Main app with routing
+
+src-tauri/src/                   # Rust backend
+├── lib.rs                       # App setup + state management
+├── main.rs                      # Entry point
+├── commands/                    # Tauri IPC commands
+│   ├── audio.rs                 # Audio validation + playback
+│   ├── dialogs.rs               # File picker dialog
+│   ├── scheduler.rs             # Scheduler control
+│   ├── schedules.rs             # Schedule CRUD
+│   └── settings.rs              # Settings CRUD
+├── audio/
+│   ├── service.rs               # AudioService (rodio wrapper)
+│   ├── player.rs                # Audio player state
+│   ├── validator.rs             # File format validation
+│   └── error.rs                 # Audio errors
+├── scheduler/
+│   ├── engine.rs                # SchedulerEngine (tokio tasks)
+│   ├── time_calculator.rs       # Next execution time logic
+│   └── error.rs                 # Scheduler errors
+├── db/
+│   ├── mod.rs                   # Database initialization
+│   ├── models.rs                # SQLite models + conversions
+│   ├── schedules.rs             # Schedule repository
+│   ├── settings.rs              # Settings repository
+│   └── playback_history.rs      # Playback log repository
+├── tray.rs                      # System tray setup
+└── migrations/
+    ├── 001_create_core_tables.sql
+    └── 002_add_last_run_at.sql
 ```
 
 ---
 
-## Key Architecture Patterns
+## Architecture Patterns
 
 ### Data Flow
-1. **User Action** → Frontend UI Component
-2. **Component** → Zustand Store Action
-3. **Store** → Tauri IPC Command (`invoke()`)
-4. **Tauri Command** → Rust Backend Logic
-5. **Backend** → Database/Scheduler Engine/Audio Player
-6. **Response** → Back through the chain to update UI
+```
+User Action → Component → Zustand Store → invoke(command) → Tauri Command
+  → Business Logic → Repository → SQLite → Response → Store Update → UI
+```
 
-### Repository Pattern
-- All database access goes through repository classes
-- Repositories provide clean interfaces: `create()`, `get_all()`, `get_by_id()`, `update()`, `delete()`
-- Example: `ScheduleRepository`, `SettingsRepository`
-
-### State Management
-- **Frontend State**: Zustand stores (lightweight, minimal boilerplate)
-- **Persistent State**: SQLite database
-- **Runtime State**: Scheduler engine maintains active schedules in memory
-
-### Async Pattern
-- Backend uses tokio for async operations
-- Frontend uses async/await with Tauri's `invoke()`
-- Scheduling uses `tokio::spawn` for background tasks
+### Key Patterns
+- **Repository Pattern**: Database access via `ScheduleRepository`, `SettingsRepository`, `PlaybackHistoryRepository`
+- **State Management**: Zustand stores for UI state + SQLite for persistence
+- **Async Runtime**: Tokio for scheduler engine + background tasks
+- **IPC**: Type-safe Tauri commands with serde serialization
+- **Error Handling**: thiserror enums converted to String for IPC boundary
 
 ---
 
 ## Database Schema
 
-### Schedules Table
-```sql
-CREATE TABLE schedules (
-    id TEXT PRIMARY KEY,              -- UUID
-    name TEXT NOT NULL,               -- User-friendly name
-    audio_file_path TEXT NOT NULL,   -- Absolute path to audio file
-    scheduled_time TEXT NOT NULL,    -- HH:mm format
-    enabled INTEGER DEFAULT 1,        -- Boolean (1=enabled, 0=disabled)
-    repeat_type TEXT,                 -- 'once', 'daily', 'weekly', 'weekdays', 'weekends'
-    repeat_days TEXT,                 -- JSON array for custom days [0-6]
-    volume INTEGER DEFAULT 100,       -- 0-100
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-```
+**Location**: `~/Library/Application Support/com.yourname.resonatify/resonatify.db`
 
-### Settings Table
 ```sql
+-- schedules: user-defined audio schedules
+CREATE TABLE schedules (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    audio_file_path TEXT NOT NULL,
+    scheduled_time TEXT NOT NULL,     -- HH:mm format
+    enabled INTEGER DEFAULT 1,        -- 0 or 1
+    repeat_type TEXT NOT NULL,        -- JSON: RepeatType enum
+    repeat_days TEXT,                 -- JSON: optional weekday array
+    volume INTEGER DEFAULT 100,       -- 0-100
+    created_at TEXT,
+    updated_at TEXT,
+    last_run_at TEXT                  -- Track last execution
+);
+
+-- settings: key-value configuration
 CREATE TABLE settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
-    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    updated_at TEXT
 );
-```
 
-### Playback History Table
-```sql
+-- audio_playback_history: execution logs (auto-trimmed to 1000 entries)
 CREATE TABLE audio_playback_history (
     id TEXT PRIMARY KEY,
-    schedule_id TEXT,
+    schedule_id TEXT NOT NULL,
     played_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    status TEXT,  -- 'success', 'failed', 'skipped'
-    FOREIGN KEY (schedule_id) REFERENCES schedules(id)
+    status TEXT CHECK (status IN ('success', 'failed', 'skipped')),
+    error_message TEXT,
+    FOREIGN KEY (schedule_id) REFERENCES schedules(id) ON DELETE CASCADE
 );
 ```
 
 ---
 
-## Key TypeScript Types
+## Key Types
 
+### TypeScript (Frontend)
 ```typescript
-// Schedule
 interface Schedule {
     id: string;
     name: string;
@@ -193,684 +175,178 @@ interface Schedule {
     scheduledTime: string;        // HH:mm format
     enabled: boolean;
     repeatType: RepeatType;
-    repeatDays?: number[];        // 0-6 (Sun-Sat)
     volume: number;               // 0-100
     createdAt: string;
     updatedAt: string;
 }
 
-// Repeat Types
-type RepeatType = 'once' | 'daily' | 'weekly' | 'weekdays' | 'weekends' | 'custom';
+type RepeatType =
+    | { type: 'once' }
+    | { type: 'daily' }
+    | { type: 'weekdays' }
+    | { type: 'weekends' }
+    | { type: 'weekly'; days: number[] }  // 0=Sun, 6=Sat
+    | { type: 'custom'; intervalMinutes: number };
 
-// Settings
 interface Settings {
     theme: 'light' | 'dark' | 'system';
     launchAtLogin: boolean;
+    minimizeToTray: boolean;
     showNotifications: boolean;
     notificationSound: boolean;
     defaultVolume: number;
-    minimizeToTray: boolean;
 }
 ```
 
 ---
 
-## Key Rust Types
-
+### Rust (Backend)
 ```rust
-// Schedule Model
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Schedule {
     pub id: String,
     pub name: String,
     pub audio_file_path: String,
-    pub scheduled_time: String,  // HH:mm format
+    pub scheduled_time: String,       // HH:mm
     pub enabled: bool,
     pub repeat_type: RepeatType,
-    pub repeat_days: Option<Vec<u8>>,
     pub volume: u8,
     pub created_at: String,
     pub updated_at: String,
+    pub last_run_at: Option<String>,
 }
 
-// Repeat Type Enum
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum RepeatType {
     Once,
     Daily,
-    Weekly { days: Vec<Weekday> },
     Weekdays,
     Weekends,
+    Weekly { days: Vec<Weekday> },   // chrono::Weekday
     Custom { interval_minutes: u32 },
 }
 ```
 
 ---
 
-## Important Conventions
-
-### Naming Conventions
-- **Frontend Files**: PascalCase for components (`ScheduleCard.tsx`), camelCase for utilities
-- **Backend Files**: snake_case for all Rust files (`time_calculator.rs`)
-- **Functions**: camelCase (TypeScript), snake_case (Rust)
-- **Components**: PascalCase
-- **Constants**: UPPER_SNAKE_CASE
+## Conventions
 
 ### Code Style
-- **Rust**: Follow `rustfmt` standard formatting
-- **TypeScript**: ESLint + Prettier configuration
-- **Imports**: Group by external → internal → relative
-- **Error Handling**:
-  - Rust: Use `Result<T, E>` with custom error types
-  - TypeScript: Try-catch with user-friendly error messages
+- **Naming**: PascalCase (components), camelCase (TS), snake_case (Rust)
+- **Format**: `cargo fmt`, ESLint + Prettier
+- **Error Handling**: thiserror → String for Tauri commands
+- **Testing**: Unit tests for new features (Vitest for TS, `#[cfg(test)]` for Rust)
 
-### Testing Policy (Mandatory)
-- Every code change **must** ship with corresponding unit tests that exercise the new or modified logic (frontend → Vitest/RTL, backend → Rust tests).
-- Pull requests without adequate test coverage for their changes are not eligible for review; document explicit rationale only when a test is impossible.
-- When touching existing functionality, update or extend existing tests to reflect the behavior change and keep coverage for critical paths above the agreed thresholds.
-- CI and local workflows should run lint + unit tests before requesting review to enforce the policy consistently.
-
-### Git Commit Messages
-- Use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
-- Examples:
-  - `feat: add schedule repeat configuration`
-  - `fix: correct time zone calculation in scheduler`
-  - `docs: update API documentation`
-
-### Git Branching Strategy
-
-**Overview**: Simple Git workflow optimized for solo developers and small teams.
-
-**Branch Structure:**
-
-1. **`main` Branch**
-   - Production-ready code only
-   - Always stable and deployable
-   - Protected: requires PR for changes
-   - Tagged with version numbers for releases
-
-2. **Feature Branches**
-   - Branch from: `main`
-   - Merge back to: `main` via Pull Request
-   - Delete after merge
-
-3. **Branch Naming Conventions:**
-   ```
-   feature/schedule-repeat-logic     # New features
-   bugfix/audio-playback-crash       # Bug fixes
-   docs/update-architecture          # Documentation
-   refactor/database-layer           # Code refactoring
-   test/scheduler-engine             # Test additions
-   chore/update-dependencies         # Maintenance tasks
-   ```
-
-**Workflow:**
-
-1. **Starting New Work**
-   ```bash
-   # Ensure main is up to date
-   git checkout main
-   git pull origin main
-
-   # Create and checkout feature branch
-   git checkout -b feature/my-new-feature
-   ```
-
-2. **During Development**
-   ```bash
-   # Make changes and commit frequently
-   git add .
-   git commit -m "feat: add initial schedule repeat UI"
-
-   # Push to remote for backup/collaboration
-   git push origin feature/my-new-feature
-   ```
-
-3. **Creating Pull Request**
-   - Push feature branch to GitHub
-   - Create PR from feature branch → `main`
-   - Add descriptive title and description
-   - Reference related issues if applicable
-   - Self-review changes before requesting review
-
-4. **PR Requirements**
-   - All tests must pass
-   - Code follows style guidelines (rustfmt, ESLint)
-   - No merge conflicts with `main`
-   - Meaningful commit messages
-   - Updated documentation if needed
-
-5. **Merging**
-   ```bash
-   # After PR approval, merge via GitHub UI
-   # Use "Squash and merge" for cleaner history (optional)
-   # Delete feature branch after merge
-
-   # Update local main
-   git checkout main
-   git pull origin main
-   git branch -d feature/my-new-feature
-   ```
-
-**Release Process:**
-
-```bash
-# Tag releases on main branch
-git checkout main
-git pull origin main
-git tag -a v1.0.0 -m "Release version 1.0.0"
-git push origin v1.0.0
-```
-
-**Quick Reference:**
-
-```bash
-# Create feature branch
-git checkout -b feature/new-feature
-
-# Regular commits
-git add .
-git commit -m "feat: descriptive message"
-git push origin feature/new-feature
-
-# Update feature branch with latest main
-git checkout main
-git pull origin main
-git checkout feature/new-feature
-git merge main
-
-# After PR merged, clean up
-git checkout main
-git pull origin main
-git branch -d feature/new-feature
-```
-
-**Best Practices:**
-- Keep feature branches short-lived (< 1 week)
-- Commit frequently with clear messages
-- Push daily for backup
-- Merge `main` into your feature branch regularly to avoid conflicts
-- Delete merged branches promptly
-- Use draft PRs for work-in-progress
-- **Never commit directly to `main`** — all changes must land via a dedicated feature/fix branch and PR.
+### Git Workflow
+- **Commits**: Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
+- **Branches**: `feature/*`, `bugfix/*`, `docs/*` → PR to `main`
+- **Never commit directly to `main`** — all changes via PR
 
 ---
 
-## Common Commands
+## Development Commands
 
-### Development
 ```bash
-# Start development server (both frontend and backend)
-cargo tauri dev
+# Development
+cargo tauri dev              # Run app in dev mode
+npm run test                 # Run frontend tests
+cd src-tauri && cargo test   # Run backend tests
 
-# Run frontend only
-npm run dev
+# Code quality
+cargo fmt && cargo clippy    # Rust formatting + linting
+npm run lint                 # TypeScript linting
 
-# Run backend tests
-cd src-tauri && cargo test
-
-# Run frontend tests
-npm run test
-
-# Build for production
-cargo tauri build
-```
-
-### Database
-```bash
-# Create new migration
-sqlx migrate add <migration_name>
-
-# Run migrations
-sqlx migrate run
-
-# Revert last migration
-sqlx migrate revert
-```
-
-### Code Quality
-```bash
-# Format Rust code
-cargo fmt
-
-# Lint Rust code
-cargo clippy
-
-# Format TypeScript code
-npm run format
-
-# Lint TypeScript code
-npm run lint
+# Build
+cargo tauri build            # Production build
 ```
 
 ---
 
 ## Tauri IPC Commands
 
-### Schedule Commands
-```rust
-// Get all schedules
-get_all_schedules() -> Result<Vec<Schedule>, String>
+All commands registered in `src-tauri/src/lib.rs` and invoked via `invoke()`:
 
-// Create schedule
-create_schedule(input: CreateScheduleInput) -> Result<Schedule, String>
+### Schedules
+- `get_all_schedules()` → `Vec<Schedule>`
+- `create_schedule(input)` → `Schedule`
+- `update_schedule(id, input)` → `Schedule`
+- `delete_schedule(id)` → `()`
+- `toggle_schedule_enabled(id)` → `Schedule`
 
-// Update schedule
-update_schedule(id: String, input: UpdateScheduleInput) -> Result<Schedule, String>
+### Scheduler
+- `start_scheduler()` → `()`
+- `stop_scheduler()` → `()`
+- `reload_scheduler()` → `()`
+- `get_scheduler_status()` → `SchedulerStatus`
+- `get_upcoming_executions(count)` → `Vec<ScheduleExecution>`
 
-// Delete schedule
-delete_schedule(id: String) -> Result<(), String>
+### Audio
+- `validate_audio_file(path)` → `AudioFileInfo`
+- `play_audio_file(path, volume)` → `()`
+- `stop_audio()` → `()`
+- `get_audio_status()` → `AudioStatus`
 
-// Toggle schedule enabled/disabled
-toggle_schedule(id: String) -> Result<Schedule, String>
-```
+### Settings
+- `get_settings()` → `SettingsSnapshot`
+- `update_settings(settings)` → `()`
+- `set_launch_at_login(enabled)` → `()`
 
-### Settings Commands
-```rust
-// Get all settings
-get_settings() -> Result<HashMap<String, String>, String>
-
-// Update settings
-update_settings(settings: HashMap<String, String>) -> Result<(), String>
-
-// Set launch at login
-set_launch_at_login(enabled: bool) -> Result<(), String>
-```
-
-### Audio Commands
-```rust
-// Play audio file (manual trigger)
-play_audio_file(path: String, volume: f32) -> Result<(), String>
-
-// Stop current audio
-stop_audio() -> Result<(), String>
-
-// Get playback status
-get_playback_status() -> Result<PlaybackStatus, String>
-```
-
-### Scheduler Commands
-```rust
-// Start scheduler engine
-start_scheduler() -> Result<(), String>
-
-// Get scheduler status
-get_scheduler_status() -> Result<SchedulerStatus, String>
-
-// Get upcoming executions
-get_upcoming_executions(count: usize) -> Result<Vec<ScheduleExecution>, String>
-```
+### Dialogs
+- `open_audio_file_dialog()` → `Option<String>`  # File path
 
 ---
 
-## Frontend State Management
+## State Management
 
-### Schedule Store (Zustand)
-```typescript
-const useScheduleStore = create<ScheduleStore>((set, get) => ({
-    schedules: [],
-    isLoading: false,
-    error: null,
+### Zustand Stores
+**scheduleStore.ts**: Schedule list + CRUD operations via Tauri commands
+**settingsStore.ts**: Settings with localStorage persistence + backend sync
 
-    fetchSchedules: async () => {
-        const schedules = await invoke<Schedule[]>('get_all_schedules');
-        set({ schedules });
-    },
-
-    createSchedule: async (input) => {
-        const schedule = await invoke<Schedule>('create_schedule', { input });
-        set(state => ({ schedules: [...state.schedules, schedule] }));
-    },
-
-    // ... other methods
-}));
-```
-
-### Settings Store (Zustand with Persistence)
-```typescript
-const useSettingsStore = create<SettingsStore>()(
-    persist(
-        (set, get) => ({
-            theme: 'system',
-            launchAtLogin: false,
-            // ... other settings
-
-            updateTheme: async (theme) => {
-                set({ theme });
-                await invoke('update_settings', { settings: { theme } });
-            },
-        }),
-        { name: 'scheduler-settings' }
-    )
-);
-```
+Both stores use `invoke()` to communicate with Rust backend and update local state optimistically.
 
 ---
 
-## Testing Strategy
+## Key Implementation Details
 
-### Unit Tests (Rust)
-- Test time calculation logic
-- Test repeat type logic
-- Test database operations
-- Test audio validation
-- Location: `src-tauri/src/**/*_test.rs` or `#[cfg(test)]` blocks
+### Scheduler Engine
+- **Location**: `src-tauri/src/scheduler/engine.rs`
+- Each enabled schedule spawns a tokio task
+- Time calculator determines next execution based on `RepeatType`
+- Supports: Once, Daily, Weekdays, Weekends, Weekly (custom days), Custom (intervals)
 
-### Unit Tests (TypeScript)
-- Test utility functions
-- Test components in isolation
-- Test store logic
-- Location: `src/**/*.test.ts` or `src/**/*.test.tsx`
-
-### Integration Tests
-- Test schedule creation → execution flow
-- Test database persistence
-- Test frontend-backend communication
-- Location: `tests/integration/`
-
-### E2E Tests (Playwright)
-- Test complete user workflows
-- Test UI interactions
-- Location: `tests/e2e/`
-
-### Manual Testing Checklist
-- See `docs/app-plan-details.md` Phase 5.3 for comprehensive checklist
-
----
-
-## macOS Specific Considerations
-
-### Permissions Required
-- **Notifications**: Request on first run
-- **File Access**: File dialog provides scoped access
-- **Microphone**: Required for future audio recording feature
-
-### Launch at Login
-- Uses macOS LaunchAgent
-- Configured via `tauri-plugin-autostart`
-- Plist file created automatically
-
-### Code Signing & Notarization
-- Required for distribution outside App Store
-- Apple Developer Program membership required ($99/year)
-- Hardened runtime enabled
-- Entitlements file: `src-tauri/entitlements.plist`
+### Audio Service
+- **Location**: `src-tauri/src/audio/`
+- Uses rodio for cross-platform audio playback
+- Supported formats: MP3, WAV, FLAC, OGG, M4A/AAC
+- Volume: 0-100 (UI) → 0.0-1.0 (rodio)
 
 ### System Tray
-- Use template images (monochrome) for native look
-- Support retina displays (2x, 3x assets)
-- Update icon based on active/inactive state
+- **Location**: `src-tauri/src/tray.rs`
+- Shows next upcoming schedule in tooltip
+- Click to show/hide main window
+- Updates tooltip every 30 seconds
+
+### Theme System
+- Three modes: light, dark, system
+- `useThemeSync` hook applies theme to `<html data-theme>`
+- Tailwind v4 CSS variables for theming
+- Settings persist to both localStorage and SQLite
 
 ---
 
-## Audio Playback
+## Common Issues
 
-### Supported Formats
-- MP3
-- WAV
-- FLAC
-- OGG/Vorbis
-- M4A/AAC (requires symphonia crate)
+### Dark/Light theme not applying
+- **Fix**: Ensure `html[data-theme]` selectors exist, `@theme` directive positioned correctly
+- **Reference**: src/index.css
 
-### Audio Library (rodio)
-```rust
-use rodio::{Decoder, OutputStream, Sink};
-
-pub struct AudioPlayer {
-    _stream: OutputStream,
-    sink: Sink,
-}
-
-impl AudioPlayer {
-    pub fn play(&self, file_path: &str) -> Result<(), AudioError> {
-        let file = File::open(file_path)?;
-        let source = Decoder::new(BufReader::new(file))?;
-        self.sink.append(source);
-        Ok(())
-    }
-}
-```
-
-### Volume Control
-- Range: 0-100 (UI) → 0.0-1.0 (rodio)
-- Per-schedule volume setting
-- Default volume in settings
+### Schedule not executing
+- Check: Schedule enabled, audio file exists, system not sleeping
+- **Debug**: Check `audio_playback_history` table for errors
 
 ---
 
-## Scheduler Engine
-
-### Time Calculation
-```rust
-// Calculate next execution time
-pub fn next_execution_time(
-    schedule: &Schedule,
-    now: DateTime<Local>
-) -> Option<DateTime<Local>> {
-    // 1. Parse scheduled_time (HH:mm)
-    // 2. Check if should run today based on repeat_type
-    // 3. If past today's time, calculate next valid day
-    // 4. Return next execution DateTime
-}
-```
-
-### Repeat Logic
-- **Once**: Execute once, then disable
-- **Daily**: Every day at specified time
-- **Weekdays**: Monday-Friday only
-- **Weekends**: Saturday-Sunday only
-- **Weekly/Custom**: User-selected days (0=Sunday, 6=Saturday)
-
-### Background Execution
-```rust
-// Each enabled schedule gets its own tokio task
-tokio::spawn(async move {
-    loop {
-        let next_time = calculate_next_execution(&schedule);
-        let delay = next_time - now();
-        tokio::time::sleep(delay).await;
-
-        execute_schedule(&schedule).await;
-
-        if schedule.repeat_type == RepeatType::Once {
-            break;
-        }
-    }
-});
-```
-
----
-
-## Error Handling
-
-### Backend Error Pattern
-```rust
-#[derive(Debug, thiserror::Error)]
-pub enum SchedulerError {
-    #[error("Database error: {0}")]
-    DatabaseError(#[from] sqlx::Error),
-
-    #[error("Audio error: {0}")]
-    AudioError(#[from] AudioError),
-
-    #[error("Schedule not found: {0}")]
-    NotFound(String),
-}
-
-// Convert to string for Tauri commands
-.map_err(|e| e.to_string())
-```
-
-### Frontend Error Pattern
-```typescript
-try {
-    await invoke('create_schedule', { input });
-} catch (error) {
-    // Show user-friendly error message
-    toast.error(error instanceof Error ? error.message : 'Failed to create schedule');
-    console.error('Schedule creation error:', error);
-}
-```
-
----
-
-## Performance Targets
-
-- **Startup Time**: <1 second
-- **Memory Usage (Idle)**: <50MB
-- **CPU Usage (Idle)**: <5%
-- **CPU Usage (Playing)**: <20%
-- **Schedule Execution Accuracy**: 99.9% (within 1 second)
-- **Max Schedules**: 1000+ without performance degradation
-
----
-
-## Security Considerations
-
-1. **File Access**: Only access user-selected files via dialog
-2. **SQL Injection**: Use parameterized queries (sqlx handles this)
-3. **Script Execution**: Validate and sanitize (future feature)
-4. **API Keys**: Store securely in system keychain (future AI feature)
-5. **Code Signing**: Required for macOS distribution
-6. **Update Verification**: Verify signatures on auto-updates
-
----
-
-## Deployment Checklist
-
-- [ ] Update version in `package.json`, `Cargo.toml`, `tauri.conf.json`
-- [ ] Run full test suite
-- [ ] Build universal binary (`cargo tauri build --target universal-apple-darwin`)
-- [ ] Sign the application
-- [ ] Create DMG installer
-- [ ] Notarize with Apple
-- [ ] Staple notarization ticket
-- [ ] Upload to GitHub Releases
-- [ ] Update website download link
-- [ ] Update changelog
-
----
-
-## Useful Resources
-
-### Documentation
-- **Tauri Docs**: https://tauri.app/
-- **Rust Book**: https://doc.rust-lang.org/book/
-- **React Docs**: https://react.dev/
-- **shadcn/ui**: https://ui.shadcn.com/
-
-### Project Documentation
-- **Requirements**: `docs/plan-new-app.md`
-- **Detailed Plan**: `docs/app-plan-details.md`
-- **This File**: `CLAUDE.md`
-
-### Libraries
-- **rodio**: https://github.com/RustAudio/rodio
-- **chrono**: https://github.com/chronotope/chrono
-- **tokio**: https://tokio.rs/
-- **zustand**: https://github.com/pmndrs/zustand
-
-### Design
-- **macOS HIG**: https://developer.apple.com/design/human-interface-guidelines/macos
-- **Tailwind**: https://tailwindcss.com/
-
----
-
-## Common Issues & Solutions
-
-### Issue: Schedule doesn't execute at exact time
-- **Cause**: System sleep/wake, time zone changes
-- **Solution**: Implement catch-up logic, handle power events
-
-### Issue: Audio file not playing
-- **Cause**: Unsupported format, file not found, audio device disconnected
-- **Solution**: Validate file on selection, check format, handle device errors
-
-### Issue: App won't launch on user's Mac
-- **Cause**: Not signed/notarized
-- **Solution**: Ensure proper code signing and notarization
-
-### Issue: High memory usage
-- **Cause**: Large audio files loaded into memory
-- **Solution**: Use streaming for large files
-
-### Issue: Schedules lost after app restart
-- **Cause**: Database not persisted, scheduler not reloaded
-- **Solution**: Ensure DB writes, reload schedules on startup
-
-### Issue: Dark/Light theme not applying
-- **Cause**: Missing CSS selectors for `html[data-theme="dark"]` and `html[data-theme="light"]`, Tailwind v4 `@theme` directive positioned incorrectly, missing system preference media queries
-- **Solution**:
-  - Add explicit CSS selectors for all theme states (dark, light, system)
-  - Position `@theme` directive before custom property declarations
-  - Add both light and dark media queries for system theme
-  - Use inline styles with CSS custom properties for critical theme-dependent elements
-  - Replace Tailwind utilities that reference undefined color tokens with direct CSS custom property references
-- **Fixed in**: Commit b4f2154 (2025-11-15)
-
----
-
-## Development Phases (Reference)
-
-1. **✅ Research & Planning** - Weeks 1-2 (COMPLETE: 2025-11-13)
-   - ✅ 1.1 Market Research & Competitive Analysis (Complete: 2025-11-13)
-   - ✅ 1.2 User Experience Design (Complete: 2025-11-13)
-   - ✅ 1.3 Architecture Design (Complete: 2025-11-13)
-2. **⏳ Project Setup** - Week 2-3
-3. **⏳ Core Development** - Weeks 3-10
-4. **⏳ macOS Implementation** - Weeks 10-11
-5. **⏳ Testing** - Weeks 11-13
-6. **⏳ Deployment** - Weeks 13-14
-7. **🔮 Future Features** - Week 14+
-
-See `docs/app-plan-details.md` for complete phase breakdown.
-
----
-
-## Quick Start for AI Assistants
-
-When starting a new session:
-
-1. **Read this file first** for project context
-2. **Check `docs/app-plan-details.md`** for detailed implementation plans
-3. **Review current phase** in development timeline
-4. **Follow conventions** outlined in this document
-5. **Use Tauri IPC commands** for frontend-backend communication
-6. **Write tests** for new functionality
-7. **Update this file** if architecture changes
-
----
-
-## Project Goals
-
-### MVP Goals
-- ✅ Schedule audio playback at specific times
-- ✅ Support multiple repeat patterns
-- ✅ macOS native integration
-- ✅ Simple, intuitive UI
-- ✅ Reliable background execution
-
-### Post-MVP Goals
-- 🔮 Windows and Linux support
-- 🔮 Expanded action types
-- 🔮 In-app audio recording
-- 🔮 AI integration
-- 🔮 App Store distribution
-
----
-
-**Last Updated**: 2025-11-13
-**Version**: 1.0.0 (Pre-development)
-**Status**: Planning Phase
-
----
-
-## Notes for AI Assistants
-
-- **Be consistent**: Follow the patterns established in this document
-- **Be thorough**: Write tests, handle errors, document changes
-- **Be pragmatic**: Focus on MVP features first, defer nice-to-haves
-- **Be secure**: Validate inputs, handle permissions, follow best practices
-- **Be helpful**: Explain decisions, suggest improvements, ask clarifying questions
-
-Good luck building Resonatify! 🎵⏰
+**Last Updated**: 2025-11-15
+**Version**: 0.1.0
+**Status**: MVP Development
