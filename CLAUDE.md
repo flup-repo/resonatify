@@ -798,6 +798,16 @@ try {
 - **Cause**: Database not persisted, scheduler not reloaded
 - **Solution**: Ensure DB writes, reload schedules on startup
 
+### Issue: Dark/Light theme not applying
+- **Cause**: Missing CSS selectors for `html[data-theme="dark"]` and `html[data-theme="light"]`, Tailwind v4 `@theme` directive positioned incorrectly, missing system preference media queries
+- **Solution**:
+  - Add explicit CSS selectors for all theme states (dark, light, system)
+  - Position `@theme` directive before custom property declarations
+  - Add both light and dark media queries for system theme
+  - Use inline styles with CSS custom properties for critical theme-dependent elements
+  - Replace Tailwind utilities that reference undefined color tokens with direct CSS custom property references
+- **Fixed in**: Commit b4f2154 (2025-11-15)
+
 ---
 
 ## Development Phases (Reference)

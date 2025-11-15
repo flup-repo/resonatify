@@ -25,18 +25,18 @@ function App() {
   }, [fetchSettings]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="flex min-h-screen flex-col" style={{ backgroundColor: 'rgb(var(--color-background))', color: 'rgb(var(--color-foreground))' }}>
       {/* App Header - Compact */}
-      <header className="sticky top-0 z-10 border-b border-border/50 bg-card/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-10 border-b backdrop-blur-sm" style={{ borderColor: 'rgba(var(--color-border), 0.5)', backgroundColor: 'rgba(var(--color-card), 0.95)' }}>
         <div className="mx-auto flex max-w-4xl items-center justify-between px-8 py-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
-              <span className="text-base font-bold text-primary">R</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'linear-gradient(to bottom right, rgba(var(--color-primary), 0.2), rgba(var(--color-primary), 0.1))' }}>
+              <span className="text-base font-bold" style={{ color: 'rgb(var(--color-primary))' }}>R</span>
             </div>
             <h1 className="text-base font-bold leading-none tracking-tight">Resonatify</h1>
           </div>
 
-          <nav className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/50 p-1 shadow-sm">
+          <nav className="inline-flex items-center gap-1 rounded-full border p-1 shadow-sm" style={{ borderColor: 'rgba(var(--color-border), 0.6)', backgroundColor: 'rgba(var(--color-background), 0.5)' }}>
             <Button
               variant={activeTab === 'schedules' ? 'default' : 'ghost'}
               size="sm"
