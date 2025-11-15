@@ -5,6 +5,7 @@ use std::time::Duration as StdDuration;
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use serde::Serialize;
+use tauri_plugin_notification::NotificationExt;
 use tokio::sync::RwLock;
 use tokio_util::sync::CancellationToken;
 
@@ -130,6 +131,7 @@ struct EngineState {
 struct SchedulerInner {
     database: Database,
     audio: Arc<dyn AudioController>,
+    app_handle: Option<tauri::AppHandle>,
     state: RwLock<EngineState>,
 }
 
@@ -141,13 +143,19 @@ pub struct SchedulerEngine {
 impl SchedulerEngine {
     pub fn new(database: Database, audio: AudioService) -> Self {
         let controller: Arc<dyn AudioController> = Arc::new(audio);
-        Self::with_audio_controller(database, controller)
+        Self::with_audio_controller(database, controller, None)
     }
 
-    pub fn with_audio_controller(database: Database, audio: Arc<dyn AudioController>) -> Self {
+    pub fn new_with_app(database: Database, audio: AudioService, app_handle: tauri::AppHandle) -> Self {
+        let controller: Arc<dyn AudioController> = Arc::new(audio);
+        Self::with_audio_controller(database, controller, Some(app_handle))
+    }
+
+    pub fn with_audio_controller(database: Database, audio: Arc<dyn AudioController>, app_handle: Option<tauri::AppHandle>) -> Self {
         let inner = SchedulerInner {
             database,
             audio,
+            app_handle,
             state: RwLock::new(EngineState::default()),
         };
 
@@ -172,10 +180,11 @@ impl SchedulerEngine {
             let task_data = Arc::clone(&data);
             let task_db = self.inner.database.clone();
             let task_audio = Arc::clone(&self.inner.audio);
+            let task_app = self.inner.app_handle.clone();
             let task_cancel = cancel_token.clone();
 
             let handle = tauri::async_runtime::spawn(async move {
-                run_schedule_task(task_data, task_db, task_audio, task_cancel).await;
+                run_schedule_task(task_data, task_db, task_audio, task_app, task_cancel).await;
             });
 
             active.push((
@@ -358,10 +367,37 @@ impl SchedulerEngine {
     }
 }
 
+async fn send_notification(
+    app_handle: &Option<tauri::AppHandle>,
+    database: &Database,
+    title: &str,
+    body: &str,
+) {
+    if let Some(app) = app_handle {
+        // Check settings to see if notifications are enabled
+        match database.settings_repository().get("show_notifications").await {
+            Ok(Some(setting)) if setting.value == "true" => {
+                // Send notification using tauri-plugin-notification
+                if let Err(e) = app.notification()
+                    .builder()
+                    .title(title)
+                    .body(body)
+                    .show() {
+                    eprintln!("Failed to send notification: {}", e);
+                }
+            }
+            _ => {
+                // Notifications disabled or error reading setting
+            }
+        }
+    }
+}
+
 async fn run_schedule_task(
     data: Arc<ScheduleData>,
     database: Database,
     audio: Arc<dyn AudioController>,
+    app_handle: Option<tauri::AppHandle>,
     cancel_token: CancellationToken,
 ) {
     let playback_repo = database.playback_history_repository();
@@ -440,6 +476,14 @@ async fn run_schedule_task(
                             .record(&schedule.id, PlaybackStatus::Success, None)
                             .await;
 
+                        // Send success notification
+                        send_notification(
+                            &app_handle,
+                            &database,
+                            "Schedule Executed",
+                            &format!("\"{}\" played successfully", schedule.name),
+                        ).await;
+
                         data.update_state(|state| {
                             state.last_run = Some(executed_at);
                             state.status = ScheduleStatus::Idle;
@@ -451,6 +495,14 @@ async fn run_schedule_task(
                         let _ = playback_repo
                             .record(&schedule.id, PlaybackStatus::Failed, Some(message.clone()))
                             .await;
+
+                        // Send failure notification
+                        send_notification(
+                            &app_handle,
+                            &database,
+                            "Schedule Failed",
+                            &format!("\"{}\" failed to play: {}", schedule.name, message),
+                        ).await;
 
                         data.update_state(|state| {
                             state.last_error = Some(message.clone());
@@ -601,7 +653,7 @@ mod tests {
 
         let audio = Arc::new(MockAudioController::new());
         let controller: Arc<dyn AudioController> = audio.clone();
-        let scheduler = SchedulerEngine::with_audio_controller(database.clone(), controller);
+        let scheduler = SchedulerEngine::with_audio_controller(database.clone(), controller, None);
 
         scheduler.start().await.unwrap();
 
