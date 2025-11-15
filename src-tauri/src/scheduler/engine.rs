@@ -314,6 +314,48 @@ impl SchedulerEngine {
         upcoming.truncate(count);
         upcoming
     }
+
+    /// Pause all active schedules (stops execution temporarily without disabling in database)
+    pub async fn pause_all(&self) -> Result<(), SchedulerError> {
+        let is_running = {
+            let state = self.inner.state.read().await;
+            state.running
+        };
+
+        if !is_running {
+            return Err(SchedulerError::NotRunning);
+        }
+
+        // Stop the engine (cancels all tasks)
+        self.stop().await?;
+
+        Ok(())
+    }
+
+    /// Resume all schedules (restarts the engine)
+    pub async fn resume_all(&self) -> Result<(), SchedulerError> {
+        let is_running = {
+            let state = self.inner.state.read().await;
+            state.running
+        };
+
+        if is_running {
+            return Err(SchedulerError::AlreadyRunning);
+        }
+
+        // Start the engine again
+        self.start().await?;
+
+        Ok(())
+    }
+
+    /// Get upcoming executions (wrapper for commands module)
+    pub async fn get_upcoming_executions(
+        &self,
+        count: usize,
+    ) -> Result<Vec<UpcomingExecution>, SchedulerError> {
+        Ok(self.upcoming_executions(count).await)
+    }
 }
 
 async fn run_schedule_task(

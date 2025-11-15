@@ -2,6 +2,7 @@ mod audio;
 mod commands;
 mod db;
 mod scheduler;
+mod tray;
 
 use db::Database;
 use tauri::Manager;
@@ -39,7 +40,22 @@ pub fn run() {
             app.manage(AppState {
                 database,
                 audio: audio_service,
-                scheduler: scheduler_engine,
+                scheduler: scheduler_engine.clone(),
+            });
+
+            // Set up system tray
+            tray::create_tray(app.handle())?;
+
+            // Set up window close handler (hide to tray instead of quit)
+            if let Some(window) = app.get_webview_window("main") {
+                tray::setup_window_close_handler(window);
+            }
+
+            // Start background task to update tray tooltip
+            let tooltip_app = app.handle().clone();
+            let tooltip_scheduler = scheduler_engine.clone();
+            tauri::async_runtime::spawn(async move {
+                tray::start_tray_tooltip_updater(tooltip_app, tooltip_scheduler).await;
             });
 
             Ok(())
