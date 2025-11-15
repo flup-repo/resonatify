@@ -32,7 +32,7 @@ pub fn run() {
                 .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
 
             let scheduler_engine =
-                scheduler::SchedulerEngine::new(database.clone(), audio_service.clone());
+                scheduler::SchedulerEngine::new_with_app(database.clone(), audio_service.clone(), app.handle().clone());
 
             tauri::async_runtime::block_on(scheduler_engine.start())
                 .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
@@ -64,6 +64,7 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--minimized"]),
         ))
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![

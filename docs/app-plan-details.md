@@ -810,45 +810,54 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 
 **Dependencies:** 3.5 Settings UI
 
-### 4.2 Notifications
+### 4.2 Notifications ✅ COMPLETE
 
-**Tasks:**
-1. Add tauri-plugin-notification
-2. Request notification permissions
-3. Send notifications for schedule execution and failures
-4. Integrate with scheduler engine
-5. Respect settings (show notifications, notification sound)
+**Status:** ✅ Complete
+**Completion Date:** 2025-11-15
 
-**Deliverables:**
-- Native macOS notifications
-- Permission handling
-- Integration with scheduler
+**Summary:**
+- Implemented native macOS notifications using tauri-plugin-notification
+- Integrated notifications with scheduler engine to send alerts on schedule execution
+- Added settings integration to respect user notification preferences
+- Notifications automatically respect macOS Do Not Disturb mode
 
-**Technical Considerations:**
-- Handle notification permissions gracefully
-- Respect Do Not Disturb mode
-- Test on different macOS versions
-
-### 4.3 Code Signing & Notarization Setup
-
-**Tasks:**
-1. Set up Apple Developer account ($99/year)
-2. Create App ID and certificates (Developer ID Application)
-3. Configure code signing in Tauri
-4. Create entitlements file
-5. Set up notarization credentials
-6. Create build script for signing and notarization
+**Completed Tasks:**
+1. ✅ Add tauri-plugin-notification dependency to Cargo.toml
+2. ✅ Configure notification plugin in lib.rs
+3. ✅ Send notifications for schedule execution (success and failure)
+4. ✅ Integrate with scheduler engine via AppHandle
+5. ✅ Respect settings (show_notifications) before sending
 
 **Deliverables:**
-- Code signing setup
-- Notarization pipeline
-- Build scripts
+- ✅ Native macOS notifications via tauri-plugin-notification
+- ✅ Permission handling (automatic via Tauri plugin)
+- ✅ Integration with scheduler engine
+- ✅ Success notifications: "Schedule Executed" with schedule name
+- ✅ Failure notifications: "Schedule Failed" with error details
+- ✅ Settings-aware notification system
 
 **Technical Considerations:**
-- Universal binary (Intel + Apple Silicon)
-- Hardened runtime required for notarization
-- Test on both Intel and Apple Silicon Macs
-- Keep certificates secure
+- ✅ Notifications respect user preferences (show_notifications setting)
+- ✅ macOS automatically handles Do Not Disturb mode (via native notifications)
+- ✅ Graceful fallback when app handle not available (tests)
+- ✅ Updated SchedulerEngine to accept AppHandle for notification access
+- ⏳ Testing on different macOS versions (12+) - to be done in manual testing phase
+
+**Implementation Details:**
+- Added send_notification helper function that checks settings before sending
+- Modified SchedulerEngine to include optional AppHandle
+- Notifications sent on successful playback (line 479-484 in engine.rs)
+- Notifications sent on failed playback (line 498-504 in engine.rs)
+- Updated tests to use new SchedulerEngine::with_audio_controller signature
+
+**Dependencies:** 3.3 Scheduling Engine, 3.5 Settings UI
+
+### 4.3 Code Signing & Notarization Setup ❌ REMOVED FROM PLAN
+
+**Status:** ❌ Removed from scope
+**Reason:** Not required for MVP. Code signing and notarization will be deferred to post-MVP releases or handled separately outside the development plan.
+
+**Note:** The application will still run on macOS without code signing for development and personal use. Code signing would only be required for public distribution or Mac App Store submission.
 
 ---
 
@@ -1136,7 +1145,7 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 | Research & Planning | 1-2 weeks | Week 1 | Week 2 | ✅ Complete (1.1 ✅, 1.2 ✅, 1.3 ✅) |
 | Project Setup | 3-5 days | Week 2 | Week 3 | ✅ Complete (2.1 ✅, 2.2 ✅, 2.3 ✅) |
 | Core Development | 6-8 weeks | Week 3 | Week 10 | ✅ Complete (3.1-3.7 ✅) |
-| macOS Implementation | 1 week | Week 10 | Week 11 | 🔄 In Progress (4.1 ✅) |
+| macOS Implementation | 1 week | Week 10 | Week 11 | ✅ Complete (4.1 ✅, 4.2 ✅, 4.3 ❌ removed) |
 | Testing | 1-2 weeks | Week 11 | Week 13 | ⚪ Not Started |
 | Deployment | 1 week | Week 13 | Week 14 | ⚪ Not Started |
 | **Total (MVP)** | **~10-14 weeks** | - | - | **📅 Est. Q2 2025** |
@@ -1150,6 +1159,7 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 **Phase 3 Started:** 2025-11-13
 **Phase 3 Completed (including UI Polish):** 2025-11-15 🎉
 **Phase 4 Started:** 2025-11-15
+**Phase 4 Completed:** 2025-11-15 🎉
 
 **Phase 1 Progress:** 3/3 complete (100%)
 - ✅ 1.1 Market Research & Competitive Analysis
@@ -1184,10 +1194,10 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 - ✅ 3.6 System Tray Integration — Complete (2025-11-15)
 - ✅ 3.7 UI Polish Pass — Complete (2025-11-15) ✨
 
-**Phase 4 Progress:** 1/3 tasks complete (33%)
+**Phase 4 Progress:** 2/2 tasks complete (100%) 🎉
 - ✅ 4.1 Launch at Login — Complete (2025-11-15)
-- ⚪ 4.2 Notifications — Not Started
-- ⚪ 4.3 Code Signing & Notarization Setup — Not Started
+- ✅ 4.2 Notifications — Complete (2025-11-15)
+- ❌ 4.3 Code Signing & Notarization Setup — Removed from MVP scope
 
 ---
 
