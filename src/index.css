@@ -4,6 +4,39 @@
    Design System - Resonatify
    ========================================================================== */
 
+/* Tailwind Theme Definition - Define color references */
+@theme {
+  /* Colors - These reference CSS custom properties at runtime */
+  --color-background: rgb(var(--color-background));
+  --color-foreground: rgb(var(--color-foreground));
+  --color-card: rgb(var(--color-card));
+  --color-card-foreground: rgb(var(--color-card-foreground));
+  --color-popover: rgb(var(--color-popover));
+  --color-popover-foreground: rgb(var(--color-popover-foreground));
+  --color-primary: rgb(var(--color-primary));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-secondary: rgb(var(--color-secondary));
+  --color-secondary-foreground: rgb(var(--color-secondary-foreground));
+  --color-muted: rgb(var(--color-muted));
+  --color-muted-foreground: rgb(var(--color-muted-foreground));
+  --color-accent: rgb(var(--color-accent));
+  --color-accent-foreground: rgb(var(--color-accent-foreground));
+  --color-destructive: rgb(var(--color-destructive));
+  --color-destructive-foreground: rgb(var(--color-destructive-foreground));
+  --color-border: rgb(var(--color-border));
+  --color-input: rgb(var(--color-input));
+  --color-ring: rgb(var(--color-ring));
+  --color-success: rgb(var(--color-success));
+  --color-warning: rgb(var(--color-warning));
+  --color-info: rgb(var(--color-info));
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.375rem;   /* 6px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-xl: 0.75rem;    /* 12px */
+}
+
 /* CSS Variables - Dark Theme (Default) */
 :root {
   --color-background: 26 29 46;          /* #1a1d2e - Dark background */
@@ -37,36 +70,37 @@
   --color-info: 76 154 255;              /* #4c9aff */
 }
 
-/* Tailwind @theme - References CSS variables for dynamic theming */
-@theme {
-  --color-background: rgb(var(--color-background));
-  --color-foreground: rgb(var(--color-foreground));
-  --color-card: rgb(var(--color-card));
-  --color-card-foreground: rgb(var(--color-card-foreground));
-  --color-popover: rgb(var(--color-popover));
-  --color-popover-foreground: rgb(var(--color-popover-foreground));
-  --color-primary: rgb(var(--color-primary));
-  --color-primary-foreground: rgb(var(--color-primary-foreground));
-  --color-secondary: rgb(var(--color-secondary));
-  --color-secondary-foreground: rgb(var(--color-secondary-foreground));
-  --color-muted: rgb(var(--color-muted));
-  --color-muted-foreground: rgb(var(--color-muted-foreground));
-  --color-accent: rgb(var(--color-accent));
-  --color-accent-foreground: rgb(var(--color-accent-foreground));
-  --color-destructive: rgb(var(--color-destructive));
-  --color-destructive-foreground: rgb(var(--color-destructive-foreground));
-  --color-border: rgb(var(--color-border));
-  --color-input: rgb(var(--color-input));
-  --color-ring: rgb(var(--color-ring));
-  --color-success: rgb(var(--color-success));
-  --color-warning: rgb(var(--color-warning));
-  --color-info: rgb(var(--color-info));
+/* Dark Theme - Explicit selector for manual dark mode selection */
+html[data-theme="dark"] {
+  --color-background: 26 29 46;          /* #1a1d2e - Dark background */
+  --color-foreground: 255 255 255;       /* #ffffff - White text */
+  --color-card: 37 40 54;                /* #252836 - Card/Surface */
+  --color-card-foreground: 255 255 255;
+  --color-popover: 37 40 54;             /* #252836 */
+  --color-popover-foreground: 255 255 255;
 
-  /* Border Radius */
-  --radius-sm: 0.25rem;    /* 4px */
-  --radius-md: 0.375rem;   /* 6px */
-  --radius-lg: 0.5rem;     /* 8px */
-  --radius-xl: 0.75rem;    /* 12px */
+  --color-primary: 76 154 255;           /* #4c9aff - OnyX Blue */
+  --color-primary-foreground: 255 255 255;
+
+  --color-secondary: 37 40 54;           /* #252836 - Card surface */
+  --color-secondary-foreground: 255 255 255;
+
+  --color-muted: 37 40 54;               /* #252836 */
+  --color-muted-foreground: 139 146 171; /* #8b92ab - Text Secondary */
+
+  --color-accent: 76 154 255;            /* #4c9aff - OnyX Blue */
+  --color-accent-foreground: 255 255 255;
+
+  --color-destructive: 255 107 107;      /* #ff6b6b - Error */
+  --color-destructive-foreground: 255 255 255;
+
+  --color-border: 45 49 66;              /* #2d3142 - Border */
+  --color-input: 45 49 66;               /* #2d3142 */
+  --color-ring: 76 154 255;              /* #4c9aff - OnyX Blue */
+
+  --color-success: 0 212 170;            /* #00d4aa - Success */
+  --color-warning: 255 184 77;           /* #ffb84d - Warning */
+  --color-info: 76 154 255;              /* #4c9aff */
 }
 
 /* Light Theme Override */
@@ -102,7 +136,7 @@ html[data-theme="light"] {
   --color-info: 76 154 255;              /* #4c9aff */
 }
 
-/* System preference support */
+/* System preference support - Dark */
 @media (prefers-color-scheme: dark) {
   html[data-theme="system"] {
     --color-background: 26 29 46;
@@ -137,11 +171,49 @@ html[data-theme="light"] {
   }
 }
 
+/* System preference support - Light */
+@media (prefers-color-scheme: light) {
+  html[data-theme="system"] {
+    --color-background: 245 247 250;
+    --color-foreground: 26 29 46;
+    --color-card: 255 255 255;
+    --color-card-foreground: 26 29 46;
+    --color-popover: 255 255 255;
+    --color-popover-foreground: 26 29 46;
+
+    --color-primary: 76 154 255;
+    --color-primary-foreground: 255 255 255;
+
+    --color-secondary: 245 247 250;
+    --color-secondary-foreground: 26 29 46;
+
+    --color-muted: 245 247 250;
+    --color-muted-foreground: 107 114 128;
+
+    --color-accent: 76 154 255;
+    --color-accent-foreground: 255 255 255;
+
+    --color-destructive: 255 107 107;
+    --color-destructive-foreground: 255 255 255;
+
+    --color-border: 225 229 235;
+    --color-input: 225 229 235;
+    --color-ring: 76 154 255;
+
+    --color-success: 0 212 170;
+    --color-warning: 255 184 77;
+    --color-info: 76 154 255;
+  }
+}
+
 /* Base Styles */
 body {
-  @apply bg-background text-foreground antialiased;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
   font-feature-settings: "rlig" 1, "calt" 1;
   border-color: rgb(var(--color-border));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Smooth Transitions */
@@ -193,7 +265,12 @@ body {
 
 /* Focus Visible Styles */
 :focus-visible {
-  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) rgb(var(--color-background));
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) rgb(var(--color-ring));
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-offset-width: 2px;
 }
 
 /* Smooth Scrolling */
