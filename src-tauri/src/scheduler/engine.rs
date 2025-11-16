@@ -72,6 +72,7 @@ pub struct UpcomingExecution {
 #[async_trait]
 pub trait AudioController: Send + Sync + 'static {
     async fn play(&self, path: &str, volume: u8) -> Result<(), SchedulerError>;
+    async fn is_playing(&self) -> bool;
 }
 
 #[async_trait]
@@ -79,6 +80,10 @@ impl AudioController for AudioService {
     async fn play(&self, path: &str, volume: u8) -> Result<(), SchedulerError> {
         self.play(path.to_string(), volume).await?;
         Ok(())
+    }
+
+    async fn is_playing(&self) -> bool {
+        self.status().await.is_playing
     }
 }
 
@@ -479,24 +484,57 @@ async fn run_schedule_task(
                             _ => "light-spell-notifiation.wav", // Default to spell
                         };
 
-                        // Resolve the resource path
-                        if let Some(ref handle) = app_handle {
-                            if let Ok(resource_path) = handle.path().resolve(announcement_filename, tauri::path::BaseDirectory::Resource) {
-                                if let Some(path_str) = resource_path.to_str() {
-                                    // Play announcement at default volume
-                                    match audio.play(path_str, 80).await {
-                                        Ok(_) => {
-                                            // Wait for announcement to finish playing
-                                            // The "Spell" announcement is ~2 seconds, so wait 2.5s to be safe
-                                            tokio::time::sleep(StdDuration::from_millis(2500)).await;
+                        // Resolve the announcement audio path
+                        let announcement_path = if let Some(ref handle) = app_handle {
+                            // Try production resource path first
+                            match handle.path().resolve(announcement_filename, tauri::path::BaseDirectory::Resource) {
+                                Ok(resource_path) if resource_path.exists() => {
+                                    Some(resource_path)
+                                }
+                                _ => {
+                                    // Fallback to dev mode: use path relative to current executable
+                                    std::env::current_exe().ok().and_then(|exe_path| {
+                                        // Go up from target/debug/resonatify to target/debug
+                                        // Then to target, then to src-tauri, then to resources
+                                        exe_path.parent().map(|dir| {
+                                            dir.join("../../resources").join(announcement_filename)
+                                        })
+                                    }).and_then(|p| {
+                                        // Canonicalize to resolve .. in path
+                                        p.canonicalize().ok()
+                                    })
+                                }
+                            }
+                        } else {
+                            None
+                        };
+
+                        if let Some(path) = announcement_path {
+                            if let Some(path_str) = path.to_str() {
+                                // Play announcement at default volume
+                                match audio.play(path_str, 80).await {
+                                    Ok(_) => {
+                                        // Poll audio status until announcement finishes playing
+                                        let mut attempts = 0;
+                                        const MAX_WAIT_MS: u64 = 10000; // Max 10 seconds
+                                        const POLL_INTERVAL_MS: u64 = 100; // Check every 100ms
+
+                                        while audio.is_playing().await && attempts < (MAX_WAIT_MS / POLL_INTERVAL_MS) {
+                                            tokio::time::sleep(StdDuration::from_millis(POLL_INTERVAL_MS)).await;
+                                            attempts += 1;
                                         }
-                                        Err(e) => {
-                                            // Log error but continue with scheduled audio
-                                            eprintln!("Failed to play announcement: {}", e);
-                                        }
+
+                                        // Small buffer after announcement finishes
+                                        tokio::time::sleep(StdDuration::from_millis(100)).await;
+                                    }
+                                    Err(e) => {
+                                        // Log error but continue with scheduled audio
+                                        eprintln!("Failed to play announcement: {}", e);
                                     }
                                 }
                             }
+                        } else {
+                            eprintln!("Could not resolve announcement audio path for: {}", announcement_filename);
                         }
                     }
                 }
@@ -641,6 +679,11 @@ mod tests {
             let mut guard = self.last_volume.lock().await;
             *guard = Some(volume);
             Ok(())
+        }
+
+        async fn is_playing(&self) -> bool {
+            // Mock always returns false (not playing)
+            false
         }
     }
 
