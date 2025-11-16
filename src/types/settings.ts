@@ -42,7 +42,7 @@ export const defaultSettings: Settings = {
   showNotifications: true,
   notificationSound: true,
   defaultVolume: 80,
-  announcementEnabled: false,
+  announcementEnabled: true,
   announcementSound: 'spell',
 };
 

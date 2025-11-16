@@ -160,7 +160,7 @@ impl Default for SettingsSnapshot {
             show_notifications: true,
             notification_sound: true,
             default_volume: 80,
-            announcement_enabled: false,
+            announcement_enabled: true,
             announcement_sound: "spell".into(),
         }
     }

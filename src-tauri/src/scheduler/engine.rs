@@ -523,8 +523,8 @@ async fn run_schedule_task(
                                     match service.validate(path_str).await {
                                         Ok(metadata) => {
                                             if let Some(duration_ms) = metadata.duration_ms {
-                                                // Use actual duration + 200ms buffer for fade-in/processing
-                                                Some(StdDuration::from_millis(duration_ms + 200))
+                                                // Use actual duration + 50ms buffer for smooth transition
+                                                Some(StdDuration::from_millis(duration_ms + 50))
                                             } else {
                                                 // Duration unknown, use 3 second default
                                                 eprintln!("Announcement duration unknown, using 3s default");
