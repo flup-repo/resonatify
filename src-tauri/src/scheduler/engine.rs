@@ -484,10 +484,17 @@ async fn run_schedule_task(
                             if let Ok(resource_path) = handle.path().resolve(announcement_filename, tauri::path::BaseDirectory::Resource) {
                                 if let Some(path_str) = resource_path.to_str() {
                                     // Play announcement at default volume
-                                    let _ = audio.play(path_str, 80).await;
-
-                                    // Small delay between announcement and schedule audio
-                                    tokio::time::sleep(StdDuration::from_millis(500)).await;
+                                    match audio.play(path_str, 80).await {
+                                        Ok(_) => {
+                                            // Wait for announcement to finish playing
+                                            // The "Spell" announcement is ~2 seconds, so wait 2.5s to be safe
+                                            tokio::time::sleep(StdDuration::from_millis(2500)).await;
+                                        }
+                                        Err(e) => {
+                                            // Log error but continue with scheduled audio
+                                            eprintln!("Failed to play announcement: {}", e);
+                                        }
+                                    }
                                 }
                             }
                         }
