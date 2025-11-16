@@ -7,6 +7,8 @@ export interface Settings {
   showNotifications: boolean;
   notificationSound: boolean;
   defaultVolume: number;
+  announcementEnabled: boolean;
+  announcementSound: string;
 }
 
 export type SettingsUpdateInput = Partial<Settings>;
@@ -18,6 +20,8 @@ export interface BackendSettingsResponse {
   show_notifications: boolean;
   notification_sound: boolean;
   default_volume: number;
+  announcement_enabled: boolean;
+  announcement_sound: string;
 }
 
 export interface BackendSettingsPayload {
@@ -27,6 +31,8 @@ export interface BackendSettingsPayload {
   show_notifications?: boolean;
   notification_sound?: boolean;
   default_volume?: number;
+  announcement_enabled?: boolean;
+  announcement_sound?: string;
 }
 
 export const defaultSettings: Settings = {
@@ -36,6 +42,8 @@ export const defaultSettings: Settings = {
   showNotifications: true,
   notificationSound: true,
   defaultVolume: 80,
+  announcementEnabled: false,
+  announcementSound: 'spell',
 };
 
 export function mapFromBackend(payload: BackendSettingsResponse): Settings {
@@ -46,6 +54,8 @@ export function mapFromBackend(payload: BackendSettingsResponse): Settings {
     showNotifications: payload.show_notifications,
     notificationSound: payload.notification_sound,
     defaultVolume: clampVolume(payload.default_volume),
+    announcementEnabled: payload.announcement_enabled,
+    announcementSound: payload.announcement_sound,
   };
 }
 
@@ -58,6 +68,8 @@ export function toBackendPayload(input: SettingsUpdateInput): BackendSettingsPay
   if (input.showNotifications !== undefined) payload.show_notifications = input.showNotifications;
   if (input.notificationSound !== undefined) payload.notification_sound = input.notificationSound;
   if (input.defaultVolume !== undefined) payload.default_volume = clampVolume(input.defaultVolume);
+  if (input.announcementEnabled !== undefined) payload.announcement_enabled = input.announcementEnabled;
+  if (input.announcementSound !== undefined) payload.announcement_sound = input.announcementSound;
 
   return payload;
 }

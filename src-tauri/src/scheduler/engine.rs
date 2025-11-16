@@ -5,6 +5,7 @@ use std::time::Duration as StdDuration;
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use serde::Serialize;
+use tauri::Manager;
 use tauri_plugin_notification::NotificationExt;
 use tokio::sync::RwLock;
 use tokio_util::sync::CancellationToken;
@@ -465,6 +466,33 @@ async fn run_schedule_task(
                     state.next_run = None;
                 })
                 .await;
+
+                // Check if announcement is enabled and play announcement first
+                let settings_repo = database.settings_repository();
+                let settings = settings_repo.get_all().await;
+                if let Ok(settings_list) = settings {
+                    let settings_snapshot: crate::db::models::SettingsSnapshot = settings_list.into();
+                    if settings_snapshot.announcement_enabled && app_handle.is_some() {
+                        // Get the announcement sound filename
+                        let announcement_filename = match settings_snapshot.announcement_sound.as_str() {
+                            "spell" => "light-spell-notifiation.wav",
+                            _ => "light-spell-notifiation.wav", // Default to spell
+                        };
+
+                        // Resolve the resource path
+                        if let Some(ref handle) = app_handle {
+                            if let Ok(resource_path) = handle.path().resolve(announcement_filename, tauri::path::BaseDirectory::Resource) {
+                                if let Some(path_str) = resource_path.to_str() {
+                                    // Play announcement at default volume
+                                    let _ = audio.play(path_str, 80).await;
+
+                                    // Small delay between announcement and schedule audio
+                                    tokio::time::sleep(StdDuration::from_millis(500)).await;
+                                }
+                            }
+                        }
+                    }
+                }
 
                 let play_result = audio.play(&schedule.audio_file_path, schedule.volume).await;
 

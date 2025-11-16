@@ -859,6 +859,61 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 
 **Note:** The application will still run on macOS without code signing for development and personal use. Code signing would only be required for public distribution or Mac App Store submission.
 
+### 4.4 Audio Announcements ✅ COMPLETE
+
+**Status:** ✅ Complete
+**Completion Date:** 2025-11-16
+
+**Summary:**
+- Implemented audio announcement feature that plays a predefined sound before scheduled audio
+- Added settings UI with toggle to enable/disable announcements and dropdown to select announcement sound
+- Integrated announcement playback into scheduler engine with proper resource path resolution
+- Bundled announcement audio file as a Tauri resource for cross-platform compatibility
+
+**Completed Tasks:**
+1. ✅ Updated TypeScript and Rust settings models to include announcement_enabled and announcement_sound fields
+2. ✅ Modified settings repository to persist announcement configuration
+3. ✅ Enhanced scheduler engine to check settings and play announcement before schedule audio
+4. ✅ Added announcement audio file (light-spell-notifiation.wav) to Tauri resources
+5. ✅ Implemented UI toggle and dropdown in Settings Audio section
+6. ✅ Updated settings store with announcement methods (toggleAnnouncementEnabled, setAnnouncementSound)
+7. ✅ Configured Tauri bundle to include resources directory
+
+**Deliverables:**
+- ✅ Settings fields: announcement_enabled (boolean), announcement_sound (string)
+- ✅ UI components: toggle switch and dropdown selector in Audio settings
+- ✅ Scheduler integration: plays announcement before scheduled audio when enabled
+- ✅ Bundled resource: light-spell-notifiation.wav included in app bundle
+- ✅ Initial announcement sound: "Spell" (light-spell-notifiation.wav)
+
+**Technical Considerations:**
+- ✅ Announcement audio bundled as Tauri resource (src-tauri/resources/)
+- ✅ Resource path resolved at runtime using tauri::Manager::path()
+- ✅ 500ms delay between announcement and scheduled audio for smooth transition
+- ✅ Announcement plays at default volume (80%) regardless of schedule volume
+- ✅ Settings persisted to SQLite database (announcement_enabled, announcement_sound keys)
+- ✅ UI conditionally shows dropdown only when toggle is enabled
+- ✅ Default values: enabled=false, sound="spell"
+
+**Implementation Details:**
+- Modified scheduler engine (src-tauri/src/scheduler/engine.rs) to:
+  - Load settings before each schedule execution
+  - Resolve announcement audio path from bundled resources
+  - Play announcement if enabled before playing scheduled audio
+- Added tauri.conf.json bundle resources configuration
+- Updated SettingsSnapshot struct with new fields (src-tauri/src/db/models.rs)
+- Enhanced settings commands to handle announcement fields (src-tauri/src/commands/settings.rs)
+- Added UI components in SettingsPanel.tsx with responsive layout
+- Extended settingsStore with toggleAnnouncementEnabled and setAnnouncementSound methods
+
+**Dependencies:** 3.2 Audio Playback System, 3.3 Scheduling Engine, 3.5 Settings UI
+
+**Future Enhancements:**
+- Additional announcement sounds (chime, bell, etc.)
+- Custom volume control for announcements
+- Per-schedule announcement override
+- Preview button to test announcement sounds
+
 ---
 
 ## Phase 5: Testing
@@ -1194,10 +1249,11 @@ Light polish pass applied before Phase 4 to improve visual design, user experien
 - ✅ 3.6 System Tray Integration — Complete (2025-11-15)
 - ✅ 3.7 UI Polish Pass — Complete (2025-11-15) ✨
 
-**Phase 4 Progress:** 2/2 tasks complete (100%) 🎉
+**Phase 4 Progress:** 3/3 tasks complete (100%) 🎉
 - ✅ 4.1 Launch at Login — Complete (2025-11-15)
 - ✅ 4.2 Notifications — Complete (2025-11-15)
 - ❌ 4.3 Code Signing & Notarization Setup — Removed from MVP scope
+- ✅ 4.4 Audio Announcements — Complete (2025-11-16)
 
 ---
 

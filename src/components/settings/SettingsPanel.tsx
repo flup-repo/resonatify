@@ -29,6 +29,8 @@ export function SettingsPanel() {
     toggleNotifications,
     toggleNotificationSound,
     setDefaultVolume,
+    toggleAnnouncementEnabled,
+    setAnnouncementSound,
   } = useSettingsStore();
 
   useEffect(() => {
@@ -115,21 +117,50 @@ export function SettingsPanel() {
           </SettingsSection>
 
           <SettingsSection title="Audio" description="Default playback behaviour" id="audio">
-            <div className="space-y-4">
-              <Label className="flex items-center gap-2 text-sm font-medium">
-                <Volume2 className="h-4 w-4" /> Default volume
-              </Label>
-              <div className="flex flex-col gap-2">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={settings.defaultVolume}
-                  onChange={(event) => setDefaultVolume(Number(event.target.value))}
-                  className="accent-primary"
-                />
-                <span className="text-sm text-muted-foreground">{settings.defaultVolume}%</span>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2 text-sm font-medium">
+                  <Volume2 className="h-4 w-4" /> Default volume
+                </Label>
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={settings.defaultVolume}
+                    onChange={(event) => setDefaultVolume(Number(event.target.value))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm text-muted-foreground">{settings.defaultVolume}%</span>
+                </div>
               </div>
+
+              <SettingToggle
+                label="Audio announcements"
+                description="Play an announcement sound before scheduled audio"
+                checked={settings.announcementEnabled}
+                onCheckedChange={toggleAnnouncementEnabled}
+              />
+
+              {settings.announcementEnabled && (
+                <div className="flex flex-wrap items-center justify-between gap-4 pl-4">
+                  <div>
+                    <p className="text-sm font-medium">Announcement sound</p>
+                    <p className="text-xs text-muted-foreground">Choose which sound to play</p>
+                  </div>
+                  <Select
+                    value={settings.announcementSound}
+                    onValueChange={setAnnouncementSound}
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Select sound" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="spell">Spell</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
           </SettingsSection>
 
