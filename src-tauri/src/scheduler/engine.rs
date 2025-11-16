@@ -5,6 +5,7 @@ use std::time::Duration as StdDuration;
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
 use serde::Serialize;
+use tauri::Manager;
 use tauri_plugin_notification::NotificationExt;
 use tokio::sync::RwLock;
 use tokio_util::sync::CancellationToken;
@@ -71,6 +72,7 @@ pub struct UpcomingExecution {
 #[async_trait]
 pub trait AudioController: Send + Sync + 'static {
     async fn play(&self, path: &str, volume: u8) -> Result<(), SchedulerError>;
+    async fn is_playing(&self) -> bool;
 }
 
 #[async_trait]
@@ -78,6 +80,10 @@ impl AudioController for AudioService {
     async fn play(&self, path: &str, volume: u8) -> Result<(), SchedulerError> {
         self.play(path.to_string(), volume).await?;
         Ok(())
+    }
+
+    async fn is_playing(&self) -> bool {
+        self.status().await.is_playing
     }
 }
 
@@ -131,6 +137,7 @@ struct EngineState {
 struct SchedulerInner {
     database: Database,
     audio: Arc<dyn AudioController>,
+    audio_service: Option<AudioService>, // Store concrete type for announcement validation
     app_handle: Option<tauri::AppHandle>,
     state: RwLock<EngineState>,
 }
@@ -142,19 +149,22 @@ pub struct SchedulerEngine {
 
 impl SchedulerEngine {
     pub fn new(database: Database, audio: AudioService) -> Self {
+        let audio_service = Some(audio.clone());
         let controller: Arc<dyn AudioController> = Arc::new(audio);
-        Self::with_audio_controller(database, controller, None)
+        Self::with_audio_controller(database, controller, audio_service, None)
     }
 
     pub fn new_with_app(database: Database, audio: AudioService, app_handle: tauri::AppHandle) -> Self {
+        let audio_service = Some(audio.clone());
         let controller: Arc<dyn AudioController> = Arc::new(audio);
-        Self::with_audio_controller(database, controller, Some(app_handle))
+        Self::with_audio_controller(database, controller, audio_service, Some(app_handle))
     }
 
-    pub fn with_audio_controller(database: Database, audio: Arc<dyn AudioController>, app_handle: Option<tauri::AppHandle>) -> Self {
+    pub fn with_audio_controller(database: Database, audio: Arc<dyn AudioController>, audio_service: Option<AudioService>, app_handle: Option<tauri::AppHandle>) -> Self {
         let inner = SchedulerInner {
             database,
             audio,
+            audio_service,
             app_handle,
             state: RwLock::new(EngineState::default()),
         };
@@ -183,8 +193,9 @@ impl SchedulerEngine {
             let task_app = self.inner.app_handle.clone();
             let task_cancel = cancel_token.clone();
 
+            let task_audio_service = self.inner.audio_service.clone();
             let handle = tauri::async_runtime::spawn(async move {
-                run_schedule_task(task_data, task_db, task_audio, task_app, task_cancel).await;
+                run_schedule_task(task_data, task_db, task_audio, task_audio_service, task_app, task_cancel).await;
             });
 
             active.push((
@@ -397,6 +408,7 @@ async fn run_schedule_task(
     data: Arc<ScheduleData>,
     database: Database,
     audio: Arc<dyn AudioController>,
+    audio_service: Option<AudioService>,
     app_handle: Option<tauri::AppHandle>,
     cancel_token: CancellationToken,
 ) {
@@ -465,6 +477,92 @@ async fn run_schedule_task(
                     state.next_run = None;
                 })
                 .await;
+
+                // Check if announcement is enabled and play announcement first
+                let settings_repo = database.settings_repository();
+                let settings = settings_repo.get_all().await;
+                if let Ok(settings_list) = settings {
+                    let settings_snapshot: crate::db::models::SettingsSnapshot = settings_list.into();
+                    if settings_snapshot.announcement_enabled && app_handle.is_some() {
+                        // Get the announcement sound filename
+                        let announcement_filename = match settings_snapshot.announcement_sound.as_str() {
+                            "spell" => "light-spell-notifiation.wav",
+                            _ => "light-spell-notifiation.wav", // Default to spell
+                        };
+
+                        // Resolve the announcement audio path
+                        let announcement_path = if let Some(ref handle) = app_handle {
+                            // Try production resource path first
+                            match handle.path().resolve(announcement_filename, tauri::path::BaseDirectory::Resource) {
+                                Ok(resource_path) if resource_path.exists() => {
+                                    Some(resource_path)
+                                }
+                                _ => {
+                                    // Fallback to dev mode: use path relative to current executable
+                                    std::env::current_exe().ok().and_then(|exe_path| {
+                                        // Go up from target/debug/resonatify to target/debug
+                                        // Then to target, then to src-tauri, then to resources
+                                        exe_path.parent().map(|dir| {
+                                            dir.join("../../resources").join(announcement_filename)
+                                        })
+                                    }).and_then(|p| {
+                                        // Canonicalize to resolve .. in path
+                                        p.canonicalize().ok()
+                                    })
+                                }
+                            }
+                        } else {
+                            None
+                        };
+
+                        if let Some(path) = announcement_path {
+                            if let Some(path_str) = path.to_str() {
+                                // Get the announcement duration by validating the audio file
+                                let wait_duration = if let Some(ref service) = audio_service {
+                                    // Validate to get metadata including duration
+                                    match service.validate(path_str).await {
+                                        Ok(metadata) => {
+                                            if let Some(duration_ms) = metadata.duration_ms {
+                                                // Use actual duration + 50ms buffer for smooth transition
+                                                Some(StdDuration::from_millis(duration_ms + 50))
+                                            } else {
+                                                // Duration unknown, use 3 second default
+                                                eprintln!("Announcement duration unknown, using 3s default");
+                                                Some(StdDuration::from_millis(3000))
+                                            }
+                                        }
+                                        Err(e) => {
+                                            eprintln!("Failed to validate announcement audio: {}, using 3s default", e);
+                                            Some(StdDuration::from_millis(3000))
+                                        }
+                                    }
+                                } else {
+                                    // Fallback if we don't have audio service
+                                    eprintln!("No audio service available for validation, using 3s default");
+                                    Some(StdDuration::from_millis(3000))
+                                };
+
+                                // Play announcement at default volume
+                                match audio.play(path_str, 80).await {
+                                    Ok(_) => {
+                                        if let Some(duration) = wait_duration {
+                                            // Wait for the announcement to finish based on its actual duration
+                                            eprintln!("Playing announcement, waiting {}ms", duration.as_millis());
+                                            tokio::time::sleep(duration).await;
+                                            eprintln!("Announcement finished, playing scheduled audio");
+                                        }
+                                    }
+                                    Err(e) => {
+                                        // Log error but continue with scheduled audio
+                                        eprintln!("Failed to play announcement: {}", e);
+                                    }
+                                }
+                            }
+                        } else {
+                            eprintln!("Could not resolve announcement audio path for: {}", announcement_filename);
+                        }
+                    }
+                }
 
                 let play_result = audio.play(&schedule.audio_file_path, schedule.volume).await;
 
@@ -607,6 +705,11 @@ mod tests {
             *guard = Some(volume);
             Ok(())
         }
+
+        async fn is_playing(&self) -> bool {
+            // Mock always returns false (not playing)
+            false
+        }
     }
 
     async fn setup_database() -> Result<Database, DatabaseError> {
@@ -653,7 +756,7 @@ mod tests {
 
         let audio = Arc::new(MockAudioController::new());
         let controller: Arc<dyn AudioController> = audio.clone();
-        let scheduler = SchedulerEngine::with_audio_controller(database.clone(), controller, None);
+        let scheduler = SchedulerEngine::with_audio_controller(database.clone(), controller, None, None);
 
         scheduler.start().await.unwrap();
 

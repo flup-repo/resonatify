@@ -20,6 +20,8 @@ pub struct UpdateSettingsPayload {
     pub show_notifications: Option<bool>,
     pub notification_sound: Option<bool>,
     pub default_volume: Option<u8>,
+    pub announcement_enabled: Option<bool>,
+    pub announcement_sound: Option<String>,
 }
 
 #[tauri::command]
@@ -72,6 +74,18 @@ pub async fn update_settings(
 
     if let Some(volume) = payload.default_volume {
         repo.upsert("default_volume", &volume.to_string())
+            .await
+            .map_err(|err| err.to_string())?;
+    }
+
+    if let Some(flag) = payload.announcement_enabled {
+        repo.upsert("announcement_enabled", &flag.to_string())
+            .await
+            .map_err(|err| err.to_string())?;
+    }
+
+    if let Some(sound) = payload.announcement_sound {
+        repo.upsert("announcement_sound", &sound)
             .await
             .map_err(|err| err.to_string())?;
     }

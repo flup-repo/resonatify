@@ -125,6 +125,12 @@ impl From<Vec<Setting>> for SettingsSnapshot {
                         snapshot.default_volume = value.min(100);
                     }
                 }
+                "announcement_enabled" => {
+                    snapshot.announcement_enabled = setting.value == "true"
+                }
+                "announcement_sound" => {
+                    snapshot.announcement_sound = setting.value
+                }
                 _ => {}
             }
         }
@@ -141,6 +147,8 @@ pub struct SettingsSnapshot {
     pub show_notifications: bool,
     pub notification_sound: bool,
     pub default_volume: u8,
+    pub announcement_enabled: bool,
+    pub announcement_sound: String,
 }
 
 impl Default for SettingsSnapshot {
@@ -152,6 +160,8 @@ impl Default for SettingsSnapshot {
             show_notifications: true,
             notification_sound: true,
             default_volume: 80,
+            announcement_enabled: true,
+            announcement_sound: "spell".into(),
         }
     }
 }

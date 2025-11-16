@@ -27,6 +27,8 @@ interface SettingsStoreActions {
   toggleNotifications: (value: boolean) => Promise<void>;
   toggleNotificationSound: (value: boolean) => Promise<void>;
   setDefaultVolume: (value: number) => Promise<void>;
+  toggleAnnouncementEnabled: (value: boolean) => Promise<void>;
+  setAnnouncementSound: (value: string) => Promise<void>;
 }
 
 export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions>()(
@@ -81,5 +83,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
     toggleNotifications: async (value) => get().updateSettings({ showNotifications: value }),
     toggleNotificationSound: async (value) => get().updateSettings({ notificationSound: value }),
     setDefaultVolume: async (value) => get().updateSettings({ defaultVolume: value }),
+    toggleAnnouncementEnabled: async (value) => get().updateSettings({ announcementEnabled: value }),
+    setAnnouncementSound: async (value) => get().updateSettings({ announcementSound: value }),
   })),
 );
