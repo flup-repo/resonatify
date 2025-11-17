@@ -48,7 +48,22 @@ pub fn run() {
 
             // Set up window close handler (hide to tray instead of quit)
             if let Some(window) = app.get_webview_window("main") {
-                tray::setup_window_close_handler(window);
+                tray::setup_window_close_handler(window.clone());
+
+                // Check if launched with --minimized flag (from autostart)
+                let args: Vec<String> = std::env::args().collect();
+                let should_start_minimized = args.iter().any(|arg| arg == "--minimized");
+
+                if !should_start_minimized {
+                    // Show window after a brief delay to ensure webview is ready
+                    let window_clone = window.clone();
+                    tauri::async_runtime::spawn(async move {
+                        // Give the webview time to initialize
+                        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+                        let _ = window_clone.show();
+                        let _ = window_clone.set_focus();
+                    });
+                }
             }
 
             // Start background task to update tray tooltip
