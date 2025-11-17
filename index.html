@@ -1,10 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri + React + Typescript</title>
+    <title>Resonatify</title>
+    <style>
+      /* Prevent white flash during initialization */
+      #root {
+        min-height: 100vh;
+        background-color: rgb(26, 29, 46);
+      }
+    </style>
   </head>
 
   <body>

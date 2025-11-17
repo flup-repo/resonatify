@@ -13,16 +13,41 @@ type Tab = 'schedules' | 'settings';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('schedules');
+  const [isInitializing, setIsInitializing] = useState(true);
   const openCreateModal = useScheduleStore((state) => state.openCreateModal);
   const fetchSettings = useSettingsStore((state) => state.fetchSettings);
 
   useScheduleShortcuts(openCreateModal);
   useThemeSync();
 
-  // Load settings on mount
+  // Load settings on mount and ensure proper initialization
   useEffect(() => {
-    fetchSettings();
+    const initialize = async () => {
+      try {
+        await fetchSettings();
+        // Small delay to ensure theme is applied and everything is rendered
+        await new Promise(resolve => setTimeout(resolve, 50));
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initialize();
   }, [fetchSettings]);
+
+  // Show loading state during initialization
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: 'rgb(var(--color-background))' }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary/30 border-t-primary"></div>
+          <p className="text-sm text-muted-foreground">Loading Resonatify...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col" style={{ backgroundColor: 'rgb(var(--color-background))', color: 'rgb(var(--color-foreground))' }}>
