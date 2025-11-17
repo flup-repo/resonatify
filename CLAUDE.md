@@ -335,6 +335,271 @@ Both stores use `invoke()` to communicate with Rust backend and update local sta
 
 ---
 
+## Building & Distribution
+
+### Creating a macOS Installer
+
+Follow these steps to build and distribute Resonatify for macOS users:
+
+#### 1. Prepare for Production Build
+
+```bash
+# Ensure all dependencies are installed
+npm install
+cd src-tauri && cargo build --release
+cd ..
+
+# Run tests to verify everything works
+npm run test
+cd src-tauri && cargo test
+cd ..
+
+# Verify dev build works
+cargo tauri dev
+```
+
+#### 2. Build Production App
+
+```bash
+# Build the production app (creates DMG installer automatically)
+cargo tauri build
+
+# Location of built artifacts:
+# - DMG installer: src-tauri/target/release/bundle/dmg/Resonatify_0.1.0_aarch64.dmg (Apple Silicon)
+# - DMG installer: src-tauri/target/release/bundle/dmg/Resonatify_0.1.0_x64.dmg (Intel)
+# - .app bundle: src-tauri/target/release/bundle/macos/Resonatify.app
+```
+
+**Build outputs:**
+- **DMG (Disk Image)**: Distributable installer for users to download
+- **.app bundle**: The actual application (contained in DMG)
+- **Universal binary**: If configured, works on both Intel and Apple Silicon Macs
+
+#### 3. Test the Installer Locally
+
+```bash
+# Navigate to the DMG location
+cd src-tauri/target/release/bundle/dmg
+
+# Open the DMG to test installation
+open Resonatify_0.1.0_aarch64.dmg  # or _x64.dmg for Intel
+
+# Installation steps users will follow:
+# 1. DMG opens showing Resonatify.app and Applications folder
+# 2. Drag Resonatify.app to Applications folder
+# 3. Open from Applications or Launchpad
+```
+
+**Test checklist:**
+- [ ] DMG opens without errors
+- [ ] App installs to /Applications
+- [ ] App launches successfully
+- [ ] All features work (schedules, audio, settings)
+- [ ] Database persists between app restarts
+- [ ] System tray icon appears
+- [ ] Launch at login works (if enabled)
+
+#### 4. Universal Binary (Optional - Both Intel & Apple Silicon)
+
+To create a single DMG that works on both Intel and Apple Silicon Macs:
+
+**Update `src-tauri/tauri.conf.json`:**
+```json
+{
+  "bundle": {
+    "active": true,
+    "targets": ["dmg"],
+    "macOS": {
+      "minimumSystemVersion": "10.13"
+    }
+  }
+}
+```
+
+**Update `src-tauri/Cargo.toml`:**
+```toml
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+```
+
+**Build universal binary:**
+```bash
+# Install required targets
+rustup target add aarch64-apple-darwin
+rustup target add x86_64-apple-darwin
+
+# Build for both architectures and combine
+cargo tauri build --target universal-apple-darwin
+```
+
+This creates a single DMG that works on all Macs but results in a larger file size.
+
+#### 5. Prepare for Distribution
+
+**Rename DMG for clarity:**
+```bash
+cd src-tauri/target/release/bundle/dmg
+mv Resonatify_0.1.0_aarch64.dmg Resonatify-0.1.0-macOS-AppleSilicon.dmg
+# or for Intel:
+# mv Resonatify_0.1.0_x64.dmg Resonatify-0.1.0-macOS-Intel.dmg
+```
+
+**Create checksums for verification:**
+```bash
+# Generate SHA256 checksum
+shasum -a 256 Resonatify-0.1.0-macOS-AppleSilicon.dmg > Resonatify-0.1.0-macOS-AppleSilicon.dmg.sha256
+
+# Users can verify download integrity with:
+# shasum -a 256 -c Resonatify-0.1.0-macOS-AppleSilicon.dmg.sha256
+```
+
+#### 6. Distribution Options
+
+**Option A: GitHub Releases (Recommended)**
+1. Create a new release on GitHub
+2. Upload DMG file(s) as release assets
+3. Add SHA256 checksum files
+4. Write release notes with:
+   - New features
+   - Bug fixes
+   - Installation instructions
+   - System requirements
+
+**Example release command:**
+```bash
+# Create GitHub release (requires gh CLI)
+gh release create v0.1.0 \
+  src-tauri/target/release/bundle/dmg/Resonatify-0.1.0-macOS-AppleSilicon.dmg \
+  --title "Resonatify v0.1.0" \
+  --notes "Initial release of Resonatify audio scheduler"
+```
+
+**Option B: Static Website Hosting**
+- Host DMG on: GitHub Pages, Netlify, Vercel, or AWS S3
+- Create download page with installation instructions
+- Link to DMG file directly
+
+**Option C: Self-Hosted Server**
+- Upload DMG to your web server
+- Provide direct download link
+- Include installation guide on website
+
+#### 7. Installation Instructions for Users
+
+Provide these instructions on your download page:
+
+**System Requirements:**
+- macOS 10.13 (High Sierra) or later
+- Apple Silicon or Intel processor
+- ~50MB disk space
+
+**Installation Steps:**
+1. Download `Resonatify-0.1.0-macOS-AppleSilicon.dmg` (or Intel version)
+2. Open the downloaded DMG file
+3. Drag `Resonatify.app` to the `Applications` folder
+4. Launch Resonatify from Applications or Launchpad
+5. (First launch) Right-click app → Open to bypass Gatekeeper warning
+
+**Security Notice:**
+Users will see "Resonatify is from an unidentified developer" on first launch because the app is not code-signed. They need to:
+- Right-click (or Ctrl+click) Resonatify.app
+- Select "Open" from context menu
+- Click "Open" in the dialog
+
+This only needs to be done once.
+
+#### 8. Code Signing & Notarization (Optional - For Public Distribution)
+
+For wider distribution without security warnings, you'll need:
+
+**Prerequisites:**
+- Apple Developer account ($99/year)
+- Developer ID Application certificate
+- Developer ID Installer certificate
+
+**Setup code signing:**
+```bash
+# Install certificates from Apple Developer portal
+# Add to tauri.conf.json:
+{
+  "bundle": {
+    "macOS": {
+      "signingIdentity": "Developer ID Application: Your Name (TEAM_ID)"
+    }
+  }
+}
+```
+
+**Notarize the app:**
+```bash
+# Build and sign
+cargo tauri build
+
+# Notarize with Apple
+xcrun notarytool submit \
+  src-tauri/target/release/bundle/dmg/Resonatify_0.1.0_aarch64.dmg \
+  --apple-id "your@email.com" \
+  --team-id "YOUR_TEAM_ID" \
+  --password "app-specific-password"
+
+# Wait for approval (usually 5-15 minutes)
+# Staple notarization ticket to DMG
+xcrun stapler staple src-tauri/target/release/bundle/dmg/Resonatify_0.1.0_aarch64.dmg
+```
+
+**Note:** Code signing and notarization are optional for private/beta distribution but recommended for public releases.
+
+#### 9. Auto-Updates (Future Enhancement)
+
+To enable automatic updates using `tauri-plugin-updater`:
+
+**Add to `src-tauri/Cargo.toml`:**
+```toml
+[dependencies]
+tauri-plugin-updater = "2"
+```
+
+**Update `src-tauri/tauri.conf.json`:**
+```json
+{
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://yourdomain.com/updates/{{target}}/{{current_version}}"
+      ],
+      "pubkey": "YOUR_PUBLIC_KEY"
+    }
+  }
+}
+```
+
+This requires setting up an update server with JSON manifests and signed update files.
+
+#### 10. Build Checklist
+
+Before distributing to users:
+
+- [ ] Version number updated in `src-tauri/tauri.conf.json`
+- [ ] All tests passing (`npm test` and `cargo test`)
+- [ ] Production build succeeds (`cargo tauri build`)
+- [ ] DMG installs correctly on test machine
+- [ ] App launches without errors
+- [ ] All features work as expected
+- [ ] Database migrations work correctly
+- [ ] Resources bundled correctly (announcement audio)
+- [ ] System tray icon displays properly
+- [ ] Launch at login works (if enabled)
+- [ ] README updated with download link
+- [ ] Release notes written
+- [ ] DMG uploaded to distribution platform
+- [ ] Checksum file provided
+
+---
+
 ## Common Issues
 
 ### Dark/Light theme not applying
@@ -347,6 +612,6 @@ Both stores use `invoke()` to communicate with Rust backend and update local sta
 
 ---
 
-**Last Updated**: 2025-11-15
+**Last Updated**: 2025-11-16
 **Version**: 0.1.0
-**Status**: MVP Development
+**Status**: MVP Development - Ready for Beta Testing
