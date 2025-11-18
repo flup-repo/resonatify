@@ -16,7 +16,6 @@ export function useThemeSync() {
       const cachedTheme = localStorage.getItem(THEME_STORAGE_KEY);
       if (cachedTheme && (cachedTheme === 'light' || cachedTheme === 'dark' || cachedTheme === 'system')) {
         root.dataset.theme = cachedTheme;
-        console.log('Applied cached theme:', cachedTheme);
       } else if (!root.dataset.theme) {
         // Fallback to default if no cached theme
         root.dataset.theme = 'dark';
