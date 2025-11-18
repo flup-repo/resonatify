@@ -124,7 +124,7 @@ fn find_next_custom_interval(
 
     let elapsed = reference - candidate;
     let interval_seconds = interval.num_seconds().max(1);
-    let intervals_passed = (elapsed.num_seconds() + interval_seconds - 1) / interval_seconds;
+    let intervals_passed = elapsed.num_seconds() / interval_seconds;
     let advance_seconds = interval_seconds * (intervals_passed + 1);
     candidate += Duration::seconds(advance_seconds);
 
@@ -222,5 +222,35 @@ mod tests {
         let next = next_execution_time(&schedule, reference, None).unwrap().unwrap();
 
         assert!(next > reference);
+    }
+
+    #[test]
+    fn next_execution_custom_interval_short_duration_check() {
+        // Start time 10:00
+        let start_time = "10:00";
+        // Current time 10:00:31 (just after a run)
+        let reference = Local::now().date_naive().and_hms_opt(10, 0, 31).unwrap().and_local_timezone(Local).unwrap();
+        // Last run at 10:00:30
+        let last_run = Some(reference - Duration::seconds(1));
+        
+        let schedule = Schedule {
+            id: "test_interval_check".into(),
+            name: "Test Interval".into(),
+            audio_file_path: "test.mp3".into(),
+            scheduled_time: start_time.into(),
+            enabled: true,
+            repeat_type: RepeatType::Custom { interval_minutes: 1 },
+            volume: 100,
+            created_at: "".into(),
+            updated_at: "".into(),
+            last_run_at: None,
+        };
+
+        let next = next_execution_time(&schedule, reference, last_run).unwrap().unwrap();
+        
+        // Expected: 10:01:00
+        let expected = reference.date_naive().and_hms_opt(10, 1, 0).unwrap().and_local_timezone(Local).unwrap();
+        
+        assert_eq!(next, expected, "Next execution should be 10:01, but got {}", next);
     }
 }
