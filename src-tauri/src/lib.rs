@@ -25,7 +25,7 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let handle = app.handle();
-            let database = tauri::async_runtime::block_on(db::init_db(&handle))
+            let database = tauri::async_runtime::block_on(db::init_db(handle))
                 .map_err(|err| -> Box<dyn std::error::Error> { Box::new(err) })?;
 
             let audio_service = audio::AudioService::new()
