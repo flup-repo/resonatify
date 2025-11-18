@@ -131,6 +131,50 @@ Every contribution, no matter how small, is greatly appreciated! 🙏
    - Compile the Rust backend
    - Launch the application with hot-reload
 
+### Testing
+
+Resonatify has a comprehensive test suite covering both frontend and backend.
+
+#### 1. Backend Integration Tests (Rust)
+
+Verify scheduler logic, database persistence, and execution flow.
+
+```bash
+# Run scheduler integration tests
+cd src-tauri && cargo test --test scheduler_integration
+
+# Run all backend tests (unit + integration)
+cd src-tauri && cargo test
+```
+
+#### 2. Frontend E2E Tests (Playwright)
+
+Verify UI interactions, CRUD operations, and settings management.
+
+```bash
+# Install Playwright browsers (first time only)
+npx playwright install chromium
+
+# Run E2E tests
+npm run test:e2e
+
+# Run with UI dashboard
+npx playwright test --ui
+
+# View test report
+npx playwright show-report
+```
+
+#### 3. Unit Tests
+
+```bash
+# Frontend Unit Tests (Vitest)
+npm run test
+
+# Backend Unit Tests
+cd src-tauri && cargo test
+```
+
 ### Building for Production
 
 ```bash
@@ -263,19 +307,6 @@ User Action → Component → Zustand Store → invoke(command) → Tauri Comman
 ---
 
 ## Development
-
-### Running Tests
-
-```bash
-# Frontend tests
-npm run test
-
-# Backend tests
-cd src-tauri && cargo test
-
-# Run all tests
-npm run test && cd src-tauri && cargo test
-```
 
 ### Code Quality
 

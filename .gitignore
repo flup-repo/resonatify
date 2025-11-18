@@ -28,3 +28,7 @@ CLAUDE.md
 CLAUDE*
 AGENTS*
 docs/
+
+# Testing
+playwright-report/
+test-results/

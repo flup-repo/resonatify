@@ -1,7 +1,7 @@
-mod audio;
-mod commands;
-mod db;
-mod scheduler;
+pub mod audio;
+pub mod commands;
+pub mod db;
+pub mod scheduler;
 mod tray;
 
 use db::Database;
