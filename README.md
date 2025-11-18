@@ -13,6 +13,16 @@ Built with Tauri 2.0, React, and Rust
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
 [![Rust](https://img.shields.io/badge/Rust-Latest-orange?logo=rust)](https://www.rust-lang.org)
 
+---
+
+### 💖 Support This Project
+
+If you find Resonatify useful and would like to support its continued development, consider buying me a coffee! Your support helps keep this project alive and enables new features.
+
+[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?logo=paypal)](https://www.paypal.com/donate/?business=6SUDEH9BDL3WQ&no_recurring=0&item_name=Appreciate+your+kind+support%21&currency_code=EUR)
+
+Every contribution, no matter how small, is greatly appreciated! 🙏
+
 </div>
 
 ---
