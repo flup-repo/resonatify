@@ -253,4 +253,25 @@ mod tests {
         
         assert_eq!(next, expected, "Next execution should be 10:01, but got {}", next);
     }
+
+    #[test]
+    fn next_execution_weekly_selects_correct_day() {
+        // Friday
+        let reference = DateTime::<FixedOffset>::parse_from_rfc3339("2025-11-14T10:00:00+00:00")
+            .unwrap()
+            .with_timezone(&Local);
+        
+        // Schedule for Wednesdays
+        let schedule = schedule_with_repeat(
+            RepeatType::Weekly { days: vec![Weekday::Wed] }, 
+            "09:00"
+        );
+
+        let next = next_execution_time(&schedule, reference, None).unwrap().unwrap();
+
+        assert_eq!(next.weekday(), Weekday::Wed);
+        // Should be next week
+        assert!(next > reference);
+        assert!((next - reference).num_days() > 2); 
+    }
 }
