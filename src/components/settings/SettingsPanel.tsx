@@ -214,7 +214,7 @@ function SettingToggle({ label, description, checked, onCheckedChange, disabled 
         <p className="text-sm font-medium">{label}</p>
         {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} disabled={disabled} />
+      <Switch checked={checked} onCheckedChange={onCheckedChange} disabled={disabled} aria-label={label} />
     </div>
   );
 }
