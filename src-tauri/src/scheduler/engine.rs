@@ -17,21 +17,16 @@ use crate::db::Database;
 use super::error::SchedulerError;
 use super::time_calculator::next_execution_time;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum ScheduleStatus {
+    #[default]
     Idle,
     Waiting,
     Running,
     Disabled,
     Error,
     Stopped,
-}
-
-impl Default for ScheduleStatus {
-    fn default() -> Self {
-        ScheduleStatus::Idle
-    }
 }
 
 #[derive(Debug, Clone, Serialize)]
