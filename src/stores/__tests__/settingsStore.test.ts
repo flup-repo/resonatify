@@ -45,6 +45,7 @@ describe('settingsStore', () => {
   });
 
   it('fetchSettings should handle error', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     invokeMock.mockRejectedValueOnce(new Error('Failed'));
 
     await useSettingsStore.getState().fetchSettings();
@@ -52,6 +53,7 @@ describe('settingsStore', () => {
     const state = useSettingsStore.getState();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBeDefined();
+    consoleSpy.mockRestore();
   });
 
   it('updateSettings should optimistic update and call backend', async () => {
