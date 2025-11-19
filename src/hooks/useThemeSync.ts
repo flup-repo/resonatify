@@ -19,7 +19,6 @@ export function useThemeSync() {
       } else if (!root.dataset.theme) {
         // Fallback to default if no cached theme
         root.dataset.theme = 'dark';
-        console.log('Applied default theme: dark');
       }
     } catch (error) {
       console.error('Failed to read theme from localStorage:', error);
@@ -37,7 +36,6 @@ export function useThemeSync() {
     // Cache theme in localStorage for instant application on next startup
     try {
       localStorage.setItem(THEME_STORAGE_KEY, theme);
-      console.log('Theme updated to:', theme);
     } catch (error) {
       console.error('Failed to save theme to localStorage:', error);
     }
