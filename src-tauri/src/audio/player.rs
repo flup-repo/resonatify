@@ -48,6 +48,7 @@ impl AudioPlayer {
         path: PathBuf,
         metadata: AudioFileMetadata,
         volume: f32,
+        fade_duration: Duration,
     ) -> Result<PlaybackContext, AudioError> {
         self.abort_fade();
         self.stop_immediate();
@@ -63,7 +64,7 @@ impl AudioPlayer {
             Arc::clone(&sink),
             0.0,
             volume,
-            Duration::from_millis(400),
+            fade_duration,
             false,
         );
 

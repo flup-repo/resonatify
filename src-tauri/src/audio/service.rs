@@ -32,6 +32,7 @@ enum AudioCommand {
         path: PathBuf,
         metadata: AudioFileMetadata,
         volume: f32,
+        fade_duration: Duration,
         respond_to: oneshot::Sender<Result<PlaybackState, AudioError>>,
     },
     Stop {
@@ -79,9 +80,10 @@ impl AudioService {
                             path,
                             metadata,
                             volume,
+                            fade_duration,
                             respond_to,
                         } => {
-                            let result = player.play(path, metadata, volume).map(|context| {
+                            let result = player.play(path, metadata, volume, fade_duration).map(|context| {
                                 let new_state = PlaybackState {
                                     is_playing: true,
                                     current: Some(context.clone()),
@@ -134,6 +136,15 @@ impl AudioService {
         path: P,
         volume_percent: u8,
     ) -> Result<PlaybackState, AudioError> {
+        self.play_with_fade(path, volume_percent, Duration::from_millis(400)).await
+    }
+
+    pub async fn play_with_fade<P: Into<PathBuf>>(
+        &self,
+        path: P,
+        volume_percent: u8,
+        fade_duration: Duration,
+    ) -> Result<PlaybackState, AudioError> {
         let path = path.into();
         let metadata = self.validator.validate(&path)?;
         let volume = Self::volume_from_percent(volume_percent);
@@ -144,6 +155,7 @@ impl AudioService {
                 path,
                 metadata,
                 volume,
+                fade_duration,
                 respond_to: tx,
             })
             .map_err(|_| AudioError::EngineUnavailable)?;

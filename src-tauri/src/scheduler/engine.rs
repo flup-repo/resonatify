@@ -518,8 +518,8 @@ async fn run_schedule_task(
                                     match service.validate(path_str).await {
                                         Ok(metadata) => {
                                             if let Some(duration_ms) = metadata.duration_ms {
-                                                // Use actual duration + 50ms buffer for smooth transition
-                                                Some(StdDuration::from_millis(duration_ms + 50))
+                                                // Use actual duration + 500ms buffer for smooth transition and startup latency
+                                                Some(StdDuration::from_millis(duration_ms + 500))
                                             } else {
                                                 // Duration unknown, use 3 second default
                                                 eprintln!("Announcement duration unknown, using 3s default");
@@ -537,8 +537,17 @@ async fn run_schedule_task(
                                     Some(StdDuration::from_millis(3000))
                                 };
 
-                                // Play announcement at default volume
-                                match audio.play(path_str, 80).await {
+                                // Play announcement at default volume with short fade-in
+                                let play_result = if let Some(ref service) = audio_service {
+                                    service.play_with_fade(path_str, 80, StdDuration::from_millis(50))
+                                        .await
+                                        .map(|_| ())
+                                        .map_err(SchedulerError::Audio)
+                                } else {
+                                    audio.play(path_str, 80).await
+                                };
+
+                                match play_result {
                                     Ok(_) => {
                                         if let Some(duration) = wait_duration {
                                             // Wait for the announcement to finish based on its actual duration
@@ -552,6 +561,7 @@ async fn run_schedule_task(
                                         eprintln!("Failed to play announcement: {}", e);
                                     }
                                 }
+
                             }
                         } else {
                             eprintln!("Could not resolve announcement audio path for: {}", announcement_filename);
